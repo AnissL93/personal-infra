@@ -62,7 +62,7 @@ step_packages() {
         dunst libnotify-bin flameshot pulsemixer playerctl xbacklight redshift upower bc psmisc \
         htop lf fzf zathura imagemagick python3-pip \
         fcitx5 fcitx5-rime \
-        fonts-noto-color-emoji fonts-noto-cjk
+        fonts-noto-color-emoji fonts-noto-cjk fonts-liberation
 }
 
 step_suckless() {
@@ -87,7 +87,7 @@ step_fonts() {
     say "desktop fonts"
     local missing=0 f fams
     fams="$(fc-list : family | tr , '\n')"         # not piped into grep -q: pipefail + SIGPIPE
-    for f in "PxPlus IBM VGA 8x16" "Cubic 11" "typicons" "Fuzzy Bubbles"; do
+    for f in "PxPlus IBM VGA 8x16" "Ac437 IBM CGA" "Cubic 11" "typicons" "Fuzzy Bubbles"; do
         grep -qxF "$f" <<<"$fams" || missing=1
     done
     [ "$missing" = 1 ] || { echo "  (all installed)"; return; }
