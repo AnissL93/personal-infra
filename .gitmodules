@@ -1,6 +1,6 @@
 [submodule "dotfiles"]
 	path = dotfiles
-	url = git@gitlab.com:aniss93/dotfiles.git
+	url = git@github.com:AnissL93/Dotfiles.git
 [submodule "linux-desktop"]
 	path = linux-desktop
 	url = git@github.com:AnissL93/linux-desktop.git
