@@ -19,3 +19,13 @@ git submodule update --init --recursive                              # after a p
 # change something: commit + push inside the submodule first, then here:
 git add dotfiles && git commit -m "Bump dotfiles"
 ```
+
+## New machine
+
+```sh
+git clone --recursive git@github.com:AnissL93/personal-infra.git ~/System/personal-infra
+cd ~/System/personal-infra && ./bootstrap.sh --dry-run   # then without --dry-run
+```
+
+`./bootstrap.sh --help` lists the steps; each one can be run on its own and re-run safely.
+Details: `dotfiles/MANUAL.md`, section "Where things live".
