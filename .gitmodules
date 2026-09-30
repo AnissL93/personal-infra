@@ -1,0 +1,9 @@
+[submodule "dotfiles"]
+	path = dotfiles
+	url = git@gitlab.com:aniss93/dotfiles.git
+[submodule "linux-desktop"]
+	path = linux-desktop
+	url = git@github.com:AnissL93/linux-desktop.git
+[submodule "knowledge-forge"]
+	path = knowledge-forge
+	url = git@github.com:AnissL93/knowledge-forge.git
