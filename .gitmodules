@@ -10,3 +10,6 @@
 [submodule "keymap"]
 	path = keymap
 	url = git@github.com:AnissL93/homerow-keymap.git
+[submodule "rime"]
+	path = rime
+	url = git@github.com:AnissL93/rime.git

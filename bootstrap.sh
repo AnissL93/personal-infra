@@ -11,14 +11,15 @@
 #   fonts      install the desktop fonts from dotfiles/fonts/desktop
 #   links      symlink configs into $HOME (existing files are backed up as *.bak-<date>)
 #   shell      oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc
-#   input      fcitx5 + Rime data (github AnissL93/rime)
+#   input      fcitx5 + Rime: link ~/.local/share/fcitx5/rime -> rime/ (submodule)
 #   emacs      Doom Emacs
 #   python     lunar_python for the 八字 status block
 #   session    dwm entry for display managers (/usr/share/xsessions)
 #   keyboard   keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
+#   zathura    djvu/comics/ps plugins, build the mupdf plugin (epub, mobi), default app for documents
 #   theme      generate all colours, cursors, wallpaper (amber, or the current theme)
 #
-# Replaces linux-desktop/install.sh. Needs sudo for packages, suckless, session and keyboard.
+# Replaces linux-desktop/install.sh. Needs sudo for packages, suckless, session, keyboard and zathura.
 # Not automated (printed at the end): credentials, VS Code UI font, Firefox first start.
 
 set -euo pipefail
@@ -145,10 +146,8 @@ step_shell() {
 
 step_input() {
     say "fcitx5 + Rime"
-    if [ ! -d "$HOME/.local/share/fcitx5/rime/.git" ]; then
-        [ -d "$HOME/.local/share/fcitx5/rime" ] && x mv "$HOME/.local/share/fcitx5/rime" "$HOME/.local/share/fcitx5/rime.bak-$STAMP"
-        x git clone git@github.com:AnissL93/rime.git "$HOME/.local/share/fcitx5/rime"
-    fi
+    [ -e "$ROOT/rime/default.yaml" ] || x git -C "$ROOT" submodule update --init rime
+    link "$ROOT/rime" "$HOME/.local/share/fcitx5/rime"
 }
 
 step_emacs() {
@@ -182,6 +181,38 @@ step_keyboard() {
     x sudo systemctl restart keyd                     # loads the config
 }
 
+step_zathura() {
+    say "zathura plugins + default document viewer"
+    x sudo apt-get install -y zathura zathura-djvu zathura-cb zathura-ps zathura-dev libmupdf-dev meson ninja-build
+    # epub/mobi/fb2/xps: zathura-pdf-mupdf is not packaged by Ubuntu, build it
+    local plugdir src zv tag
+    plugdir="$(pkg-config --variable=plugindir zathura 2>/dev/null || echo /usr/lib/x86_64-linux-gnu/zathura)"
+    if [ ! -e "$plugdir/libpdf-mupdf.so" ]; then
+        src="${XDG_CACHE_HOME:-$HOME/.cache}/zathura-pdf-mupdf"
+        [ -d "$src" ] || x git clone https://github.com/pwmt/zathura-pdf-mupdf "$src"
+        if [ -z "$DRY" ]; then
+            # ponytail: newest tag not newer than zathura (both date-versioned); pin by hand if a build fails
+            zv="$(pkg-config --modversion zathura)"
+            tag="$({ git -C "$src" tag | grep -E '^[0-9]{4}\.'; echo "$zv ZATHURA"; } | sort -V | sed '/ ZATHURA$/,$d' | tail -1)"
+            x git -C "$src" checkout -q -f "$tag"
+            # Ubuntu's mupdf.pc reports an older version than the installed headers/lib
+            x sed -i 's/^mupdf_required_version_minor = .*/mupdf_required_version_minor = 0/' "$src/meson.build"
+        fi
+        x rm -rf "$src/build"
+        x meson setup "$src/build" "$src" --prefix=/usr -Dbuildtype=release
+        x ninja -C "$src/build"
+        x sudo ninja -C "$src/build" install
+    fi
+    # images stay with feh
+    x xdg-mime default org.pwmt.zathura.desktop \
+        application/pdf application/epub+zip application/x-mobipocket-ebook application/x-fictionbook \
+        application/x-fictionbook+xml application/oxps application/vnd.ms-xpsdocument \
+        image/vnd.djvu image/vnd.djvu+multipage image/x-djvu \
+        application/postscript application/x-gzpostscript application/x-bzpostscript image/x-eps \
+        application/vnd.comicbook+zip application/vnd.comicbook-rar application/x-cbz application/x-cbr \
+        application/x-cb7 application/x-cbt
+}
+
 step_theme() {
     say "colour theme"
     local t; t="$(cat "$HOME/.config/theme/current" 2>/dev/null || echo amber)"
@@ -207,12 +238,12 @@ EOF
 
 # ---- main ---------------------------------------------------------------------------------
 
-ALL=(packages suckless fonts links shell input emacs python session keyboard theme)
+ALL=(packages suckless fonts links shell input emacs python session keyboard zathura theme)
 steps=()
 for a in "$@"; do
     case "$a" in
         --dry-run) DRY=1 ;;
-        -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
         *) [[ " ${ALL[*]} " == *" $a "* ]] || { echo "unknown step: $a (steps: ${ALL[*]})" >&2; exit 1; }
            steps+=("$a") ;;
     esac
