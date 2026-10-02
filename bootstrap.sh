@@ -15,10 +15,11 @@
 #   emacs      Doom Emacs
 #   python     lunar_python for the 八字 status block
 #   session    dwm entry for display managers (/usr/share/xsessions)
+#   keyboard   keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
 #   theme      generate all colours, cursors, wallpaper (amber, or the current theme)
 #
-# Replaces linux-desktop/install.sh. Needs sudo for packages, suckless and session.
-# Not automated (printed at the end): credentials, keyd, VS Code UI font, Firefox first start.
+# Replaces linux-desktop/install.sh. Needs sudo for packages, suckless, session and keyboard.
+# Not automated (printed at the end): credentials, VS Code UI font, Firefox first start.
 
 set -euo pipefail
 
@@ -113,7 +114,7 @@ step_links() {
     link "$DOT/redshift.conf"          "$HOME/.config/redshift.conf"
     link "$DOT/vscode/settings.json"   "$HOME/.config/Code/User/settings.json"
     link "$DOT/themes/theme"           "$HOME/.local/bin/theme"
-    for f in set-en-font set-cjk-font vscode-ui-font ff-profile; do
+    for f in set-en-font set-cjk-font font-preset vscode-ui-font ff-profile; do
         link "$DOT/bin/$f" "$HOME/.local/bin/$f"
     done
 
@@ -172,6 +173,14 @@ step_session() {
     x sudo install -m 644 "$DESK/dwm/dwm.desktop" /usr/share/xsessions/dwm.desktop
 }
 
+step_keyboard() {
+    say "keyd keyboard remap"
+    dpkg -s keyd >/dev/null 2>&1 || x sudo apt-get install -y keyd
+    x sudo ln -sfn "$ROOT/keymap/linux/keyd.conf" /etc/keyd/default.conf
+    x sudo systemctl enable --now keyd
+    x sudo keyd reload
+}
+
 step_theme() {
     say "colour theme"
     local t; t="$(cat "$HOME/.config/theme/current" 2>/dev/null || echo amber)"
@@ -188,7 +197,6 @@ manual_steps() {
 Left to do by hand:
   - credentials (never in git): ~/System/dotfiles/doom/secrets.el, ~/System/dotfiles/tokens/,
     ~/.password-store, ~/.config/x2ray/*.json, ssh keys
-  - keyd (keyboard remap): copy dotfiles/x11/keyd.conf to /etc/keyd/default.conf and check it
   - VS Code: install it, then `vscode-ui-font on` (sudo) for the pixel UI font
   - Firefox: start it once, then `./bootstrap.sh links theme`
   - Obsidian: vault paths in OBSIDIAN_VAULTS in dotfiles/themes/theme
@@ -198,12 +206,12 @@ EOF
 
 # ---- main ---------------------------------------------------------------------------------
 
-ALL=(packages suckless fonts links shell input emacs python session theme)
+ALL=(packages suckless fonts links shell input emacs python session keyboard theme)
 steps=()
 for a in "$@"; do
     case "$a" in
         --dry-run) DRY=1 ;;
-        -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
         *) [[ " ${ALL[*]} " == *" $a "* ]] || { echo "unknown step: $a (steps: ${ALL[*]})" >&2; exit 1; }
            steps+=("$a") ;;
     esac

@@ -7,3 +7,6 @@
 [submodule "knowledge-forge"]
 	path = knowledge-forge
 	url = git@github.com:AnissL93/knowledge-forge.git
+[submodule "keymap"]
+	path = keymap
+	url = git@github.com:AnissL93/Keymap.git
