@@ -140,5 +140,4 @@ the file named in "Installed by".
 
 ## To do
 
-- Move the apps in `~/System` (Firefox, Zotero, LosslessCut, frp, JetBrains, WeChat) to `/opt`.
 - Decide: keep zoxide / eza / starship on the Mac? Move Miniforge envs to uv? Remove Ollama?
