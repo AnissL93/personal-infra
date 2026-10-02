@@ -105,7 +105,7 @@ Everything I use, one row each. **Add a row whenever something new is installed.
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
 | mpv, vlc | L | **manual** (apt) | | | |
-| net-mpd + rmpc | L | **manual** (own build + cargo) | | ✓ | `~/System/net-mpd` → `~/go/bin/net-mpd` |
+| mix-mpd + rmpc | L | **manual** (own build + cargo) | `~/.config/rmpc` (not in git) | ✓ | `github.com:AnissL93/mix-mpd` (based on net-mpd, extended to mpv and other sources) in `~/System/mix-mpd` → `~/go/bin/mix-mpd`, systemd user unit `mix-mpd.service` |
 | feh | L | bootstrap `packages` | | | image viewer and wallpaper setter |
 | ffmpeg, Blender | L | **manual** (apt) | | | |
 | LosslessCut | L | **manual** | | | `~/System/LosslessCut-linux-x64` |
