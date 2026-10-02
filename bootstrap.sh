@@ -177,8 +177,8 @@ step_keyboard() {
     say "keyd keyboard remap"
     dpkg -s keyd >/dev/null 2>&1 || x sudo apt-get install -y keyd
     x sudo ln -sfn "$ROOT/keymap/linux/keyd.conf" /etc/keyd/default.conf
-    x sudo systemctl enable --now keyd
-    x sudo keyd reload
+    x sudo systemctl enable keyd
+    x sudo systemctl restart keyd                     # loads the config
 }
 
 step_theme() {
