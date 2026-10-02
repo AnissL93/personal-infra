@@ -6,7 +6,7 @@ My whole computer setup in one place. Each part is its own repo, added here as a
 |---|---|---|
 | `dotfiles/` | `github.com:AnissL93/Dotfiles` (public) | configs, scripts, colour themes (`themes/`), **user manual: [`dotfiles/MANUAL.md`](dotfiles/MANUAL.md)** |
 | `linux-desktop/` | `github.com:AnissL93/linux-desktop` | wallpapers, cursor generator, install scripts; its own submodules `dwm` (with dmenu, dwmblocks), `st`, `slock`, `wallpapers` |
-| `keymap/` | `github.com:AnissL93/Keymap` | keyboard layout: keyd for Linux (`linux/keyd.conf`, `/etc/keyd/default.conf` links here), Karabiner for macOS (`mac/`) |
+| `keymap/` | `github.com:AnissL93/homerow-keymap` | keyboard layout: keyd for Linux (`linux/keyd.conf`, `/etc/keyd/default.conf` links here), Karabiner for macOS (`mac/`) |
 | `knowledge-forge/` | `github.com:AnissL93/knowledge-forge` | public Obsidian vault template (research + startup pipeline). My private vault is synced with Syncthing; improvements are periodically folded back into this template |
 
 The old paths `~/System/dotfiles`, `~/System/linux-desktop` and `~/Projects/knowledge-forge` are
