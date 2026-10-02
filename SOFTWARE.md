@@ -17,7 +17,7 @@ Everything I use, one row each. **Add a row whenever something new is installed.
 | st | L | bootstrap `suckless` | `desktop/linux/st` | ✓ | own fork |
 | slock | L | bootstrap `suckless` | `desktop/linux/slock` | ✓ | own fork |
 | cursors | L | `theme` | `desktop/linux/cursors` | ✓ | generated per theme |
-| xcompmgr, xwallpaper, xdotool | L | bootstrap `packages` | | | |
+| xcompmgr, xdotool | L | bootstrap `packages` | | | |
 | dunst | L | bootstrap `packages` | `desktop/linux/dunst/` | ✓ | |
 | flameshot | L | bootstrap `packages` | | | |
 | redshift | L | bootstrap `packages` | `desktop/linux/redshift.conf` | | |
@@ -25,8 +25,8 @@ Everything I use, one row each. **Add a row whenever something new is installed.
 | fcitx5 + Rime | L | bootstrap `packages`, `input` | `rime/` | ✓ | |
 | GTK settings | L | bootstrap `links` | `desktop/linux/gtk-3.0/` | | cursor only |
 | desktop scripts | L | bootstrap `links` | `desktop/linux/scripts/`, `desktop/linux/bin/` | | status bar blocks, dmenu helpers, font tools |
-| fonts | LM | bootstrap `fonts` | `dotfiles/fonts/desktop/` | | `dotfiles/fonts/` (3.4 GB) is local only |
-| wallpapers | L | `theme` | `dotfiles/themes/wallpapers/`, `dotfiles/wallpapers/`, `desktop/wallpapers` | ✓ | three copies; the last is makccr/wallpapers (8.3 GB) |
+| fonts | LM | bootstrap `fonts` | `github.com:AnissL93/assets` (`fonts/`) | | one folder per family with its licence; StarLovePencil local only (licence unknown) |
+| wallpapers | L | `theme` (downloads on first use) | `github.com:AnissL93/assets` | ✓ | cache `~/.local/share/wallpapers`; other collections are forks, see the assets README |
 
 ## Desktop: macOS
 
@@ -106,7 +106,7 @@ Everything I use, one row each. **Add a row whenever something new is installed.
 |---|---|---|---|---|---|
 | mpv, vlc | L | **manual** (apt) | | | |
 | net-mpd + rmpc | L | **manual** (own build + cargo) | | ✓ | `~/System/net-mpd` → `~/go/bin/net-mpd` |
-| feh | L | **manual** (apt) | | | image viewer |
+| feh | L | bootstrap `packages` | | | image viewer and wallpaper setter |
 | ffmpeg, Blender | L | **manual** (apt) | | | |
 | LosslessCut | L | **manual** | | | `~/System/LosslessCut-linux-x64` |
 | yt-dlp | L | **manual** (conda) | | | |
@@ -138,9 +138,6 @@ Everything I use, one row each. **Add a row whenever something new is installed.
 
 Reorganisation (plan: `packages/`, `builds/`, `links.txt`; apps to `/opt`):
 
-- Wallpapers: set them with feh instead of xwallpaper; keep only the images my themes use; other
-  people's wallpaper repos become forks, linked from the docs only.
-- Fonts: keep the ones the font scripts use (pixel, bubble) and the Obsidian ones; delete the rest.
 - macOS: use the same fonts as Linux; link `~/Library/Rime` to `rime/` (Squirrel) and replace
   `install_rime.sh` with a current librime.
 - Decide: keep zoxide / eza / starship on the Mac? Move Miniforge envs to uv? Remove Ollama?

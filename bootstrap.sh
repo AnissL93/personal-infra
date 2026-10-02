@@ -8,7 +8,7 @@
 # steps (each is safe to re-run):
 #   packages   apt packages: X, build deps, desktop tools, input method, fonts
 #   suckless   build + install dwm, dmenu, dwmblocks, st, slock (and libxft-bgra if libXft is old)
-#   fonts      install the desktop fonts from dotfiles/fonts/desktop
+#   fonts      install the fonts from the assets repo (fonts/)
 #   links      symlink configs into $HOME (existing files are backed up as *.bak-<date>)
 #   shell      oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc
 #   input      fcitx5 + Rime: link ~/.local/share/fcitx5/rime -> rime/ (submodule)
@@ -57,7 +57,7 @@ step_packages() {
     say "apt packages"
     x sudo apt-get update
     x sudo apt-get install -y \
-        xorg xinit x11-xserver-utils xdotool xclip xsel xwallpaper xcompmgr \
+        xorg xinit x11-xserver-utils xdotool xclip xsel feh xcompmgr \
         build-essential pkg-config git curl autoconf automake libtool xutils-dev \
         libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev libharfbuzz-dev \
         libxrandr-dev libxext-dev libcrypt-dev fontconfig \
@@ -86,15 +86,16 @@ step_suckless() {
 }
 
 step_fonts() {
-    say "desktop fonts"
-    local missing=0 f fams
-    fams="$(fc-list : family | tr , '\n')"         # not piped into grep -q: pipefail + SIGPIPE
-    for f in "PxPlus IBM VGA 8x16" "Ac437 IBM CGA" "Cubic 11" "typicons" "Fuzzy Bubbles"; do
-        grep -qxF "$f" <<<"$fams" || missing=1
-    done
-    [ "$missing" = 1 ] || { echo "  (all installed)"; return; }
-    x mkdir -p "$HOME/.local/share/fonts/personal-infra"
-    x cp "$DOT/fonts/desktop/"*.ttf "$HOME/.local/share/fonts/personal-infra/"
+    say "fonts (github.com/AnissL93/assets, fonts/)"
+    # the assets clone if there is one, else a sparse clone holding only fonts/
+    local src="$HOME/System/assets"
+    if [ ! -d "$src/fonts" ]; then
+        src="${XDG_CACHE_HOME:-$HOME/.cache}/assets"
+        [ -d "$src/.git" ] || x git clone -q --depth 1 --filter=blob:none --sparse https://github.com/AnissL93/assets "$src"
+        x git -C "$src" sparse-checkout set fonts
+        x git -C "$src" pull -q
+    fi
+    link "$src/fonts" "$HOME/.local/share/fonts/personal-infra"
     x fc-cache -f
 }
 
