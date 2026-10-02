@@ -5,12 +5,12 @@ My whole computer setup in one place. Each part is its own repo, added here as a
 | Path | Repo | What |
 |---|---|---|
 | `dotfiles/` | `github.com:AnissL93/Dotfiles` (public) | configs, scripts, colour themes (`themes/`), **user manual: [`dotfiles/MANUAL.md`](dotfiles/MANUAL.md)** |
-| `linux-desktop/` | `github.com:AnissL93/linux-desktop` | wallpapers, cursor generator, install scripts; its own submodules `dwm` (with dmenu, dwmblocks), `st`, `slock`, `wallpapers` |
+| `desktop/` | `github.com:AnissL93/desktop` | window-manager layer, per OS: `linux/` (dwm with dmenu/dwmblocks, st, slock as submodules; x11, dunst, scripts, bin, gtk, fontconfig, cursor generator) and `mac/` (AeroSpace, skhd, borders, Mac setup scripts) |
 | `keymap/` | `github.com:AnissL93/homerow-keymap` | keyboard layout: keyd for Linux (`linux/keyd.conf`, `/etc/keyd/default.conf` links here), Karabiner for macOS (`mac/`) |
 | `rime/` | `github.com:AnissL93/rime` | Rime input schemes for fcitx5 (小鹤双拼 + 形码辅助); `~/.local/share/fcitx5/rime` links here. Typing history (`*.userdb`, `sync/`) and `build/` are git-ignored |
 | `knowledge-forge/` | `github.com:AnissL93/knowledge-forge` | public Obsidian vault template (research + startup pipeline). My private vault is synced with Syncthing; improvements are periodically folded back into this template |
 
-The old paths `~/System/dotfiles`, `~/System/linux-desktop` and `~/Projects/knowledge-forge` are
+The old paths `~/System/dotfiles` and `~/Projects/knowledge-forge` are
 symlinks into this folder, so existing links and scripts keep working.
 
 Working with submodules:
@@ -21,6 +21,8 @@ git submodule update --init --recursive                              # after a p
 # change something: commit + push inside the submodule first, then here:
 git add dotfiles && git commit -m "Bump dotfiles"
 ```
+
+Every installed app, how it is installed and where its config lives: [`SOFTWARE.md`](SOFTWARE.md).
 
 ## New machine
 

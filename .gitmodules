@@ -1,9 +1,9 @@
 [submodule "dotfiles"]
 	path = dotfiles
 	url = git@github.com:AnissL93/Dotfiles.git
-[submodule "linux-desktop"]
-	path = linux-desktop
-	url = git@github.com:AnissL93/linux-desktop.git
+[submodule "desktop"]
+	path = desktop
+	url = git@github.com:AnissL93/desktop.git
 [submodule "knowledge-forge"]
 	path = knowledge-forge
 	url = git@github.com:AnissL93/knowledge-forge.git

@@ -19,14 +19,14 @@
 #   zathura    djvu/comics/ps plugins, build the mupdf plugin (epub, mobi), default app for documents
 #   theme      generate all colours, cursors, wallpaper (amber, or the current theme)
 #
-# Replaces linux-desktop/install.sh. Needs sudo for packages, suckless, session, keyboard and zathura.
+# Needs sudo for packages, suckless, session, keyboard and zathura.
 # Not automated (printed at the end): credentials, VS Code UI font, Firefox first start.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 DOT="$ROOT/dotfiles"
-DESK="$ROOT/linux-desktop"
+DESK="$ROOT/desktop/linux"
 DRY=""
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
@@ -62,7 +62,7 @@ step_packages() {
         libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev libharfbuzz-dev \
         libxrandr-dev libxext-dev libcrypt-dev fontconfig \
         dunst libnotify-bin flameshot pulsemixer playerctl xbacklight redshift upower bc psmisc \
-        htop lf fzf zathura imagemagick python3-pip \
+        htop lf fzf zathura python3-pip python3-pil python3-numpy \
         fcitx5 fcitx5-rime \
         fonts-noto-color-emoji fonts-noto-cjk fonts-liberation
 }
@@ -102,27 +102,26 @@ step_links() {
     say "config symlinks"
     # scripts and configs refer to these paths
     [ "$ROOT/dotfiles" -ef "$HOME/System/dotfiles" ] || link "$ROOT/dotfiles" "$HOME/System/dotfiles"
-    [ "$ROOT/linux-desktop" -ef "$HOME/System/linux-desktop" ] || link "$ROOT/linux-desktop" "$HOME/System/linux-desktop"
 
-    link "$DOT/x11/xinitrc"            "$HOME/.xinitrc"
-    link "$DOT/x11/Xresources"         "$HOME/.Xresources"
+    link "$DESK/x11/xinitrc"           "$HOME/.xinitrc"
+    link "$DESK/x11/Xresources"        "$HOME/.Xresources"
     link "$DOT/doom"                   "$HOME/.config/doom"
-    link "$DOT/dunst"                  "$HOME/.config/dunst"
-    link "$DOT/scripts"                "$HOME/.config/Scripts"
+    link "$DESK/dunst"                 "$HOME/.config/dunst"
+    link "$DESK/scripts"               "$HOME/.config/Scripts"
     link "$DOT/alacritty/linux.toml"   "$HOME/.config/alacritty/alacritty.toml"
-    link "$DOT/fontconfig/fonts.conf"  "$HOME/.config/fontconfig/fonts.conf"
-    link "$DOT/gtk-3.0/settings.ini"   "$HOME/.config/gtk-3.0/settings.ini"
-    link "$DOT/redshift.conf"          "$HOME/.config/redshift.conf"
+    link "$DESK/fontconfig/fonts.conf" "$HOME/.config/fontconfig/fonts.conf"
+    link "$DESK/gtk-3.0/settings.ini"  "$HOME/.config/gtk-3.0/settings.ini"
+    link "$DESK/redshift.conf"         "$HOME/.config/redshift.conf"
     link "$DOT/zathura/zathurarc"      "$HOME/.config/zathura/zathurarc"
     link "$DOT/nvim-config"            "$HOME/.config/nvim"
     link "$DOT/vscode/settings.json"   "$HOME/.config/Code/User/settings.json"
     link "$DOT/themes/theme"           "$HOME/.local/bin/theme"
     for f in set-en-font set-cjk-font font-preset vscode-ui-font ff-profile; do
-        link "$DOT/bin/$f" "$HOME/.local/bin/$f"
+        link "$DESK/bin/$f" "$HOME/.local/bin/$f"
     done
 
     local ff
-    if ff="$("$DOT/bin/ff-profile")"; then
+    if ff="$("$DESK/bin/ff-profile")"; then
         link "$DOT/firefox/user.js"         "$ff/user.js"
         link "$DOT/firefox/userChrome.css"  "$ff/chrome/userChrome.css"
         link "$DOT/firefox/userContent.css" "$ff/chrome/userContent.css"
