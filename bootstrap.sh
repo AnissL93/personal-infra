@@ -114,6 +114,7 @@ step_links() {
     link "$DOT/gtk-3.0/settings.ini"   "$HOME/.config/gtk-3.0/settings.ini"
     link "$DOT/redshift.conf"          "$HOME/.config/redshift.conf"
     link "$DOT/zathura/zathurarc"      "$HOME/.config/zathura/zathurarc"
+    link "$DOT/nvim-config"            "$HOME/.config/nvim"
     link "$DOT/vscode/settings.json"   "$HOME/.config/Code/User/settings.json"
     link "$DOT/themes/theme"           "$HOME/.local/bin/theme"
     for f in set-en-font set-cjk-font font-preset vscode-ui-font ff-profile; do
