@@ -30,8 +30,8 @@ mpv vlc ffmpeg blender
 # internet, sync, remote
 qbittorrent sshfs x11vnc
 
-# python for the `theme` and `pixelate` scripts and status-bar blocks
-python3-pip python3-pil python3-numpy
+# system python3 runs `theme`, `pixelate` and the status-bar blocks (other Python: uv)
+python3-pip python3-pil python3-numpy python3-requests python3-xmltodict python3-bs4
 
 # From vendor apt repos or .deb files; not installed by bootstrap (add the repo by hand first):
 #   code (VS Code), obsidian, docker-ce + nvidia-container-toolkit, tailscale, syncthing,

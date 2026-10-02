@@ -21,9 +21,6 @@ brew "btop"
 brew "jq"
 brew "wget"
 brew "thefuck"
-brew "zoxide"                 # smarter cd   (keep? see SOFTWARE.md, To do)
-brew "eza"                    # nicer ls
-brew "starship"               # prompt
 
 # editors and development
 brew "d12frosted/emacs-plus/emacs-plus@30"

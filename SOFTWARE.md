@@ -52,7 +52,7 @@ the file named in "Installed by".
 | lf | L | `apt.txt` | `dotfiles/lf/` | | **not linked** |
 | htop / btop | LM | `apt.txt` / `Brewfile` | | | |
 | thefuck | M | `Brewfile` | `dotfiles/thefuck/` | | |
-| zoxide, eza, starship, jq, wget | M | `Brewfile` | | | smarter `cd`, nicer `ls`, prompt |
+| jq, wget | M | `Brewfile` | | | |
 | impala | L | `tools.txt` (cargo) | | | Wi-Fi TUI |
 | rtk | L | **manual** | | | `~/.local/bin` |
 
@@ -76,8 +76,7 @@ the file named in "Installed by".
 | git, gh | LM | `apt.txt` / `Brewfile` | | | |
 | Go + gopls | L | **manual** (Go) + `tools.txt` (gopls) | | | `/usr/local/go` |
 | Rust (rustup) + rust-analyzer | L | **manual** | | | `~/.cargo` |
-| uv + basedpyright | LM | **manual** / `Brewfile` (uv) + `tools.txt` | | | |
-| Miniforge (conda) | L | **manual** | | | `~/miniforge3`: envs `0g`, `imm` (pure Python), `SVIP` (full Anaconda); provides the `python3` that runs `theme` |
+| uv + basedpyright | LM | **manual** (Linux: astral.sh installer, `~/.local/bin/uv`) / `Brewfile` (uv) + `tools.txt` | | | every Python project and tool; old conda envs exported to `~/System/backups/conda-envs/` |
 | Node (nvm) + npm globals | L | **manual** (nvm) + `tools.txt` | | | vtsls, typescript, marp-cli, emacs-lsp-proxy, 9router |
 | Docker + nvidia-container-toolkit | L | **manual** (vendor repo) | | | |
 | CUDA toolkit 13, NVIDIA driver 595 | L | **manual** (vendor repo) | | | |
@@ -91,7 +90,6 @@ the file named in "Installed by".
 | Claude Code | LM | **manual** | `dotfiles/claude/` | ✓ | `~/.claude` mostly not in git |
 | Codex | L | **manual** | | | `~/.codex` |
 | llama.cpp | L | **manual** (source) | | | `~/System/llama.cpp` (15 GB) |
-| Ollama | L | **manual** | | | `/usr/local/bin`; models 29 GB in `/usr/share/ollama` (kept for now) |
 | research-idea-explorer (`rie`), tapp-cli | L | **manual** | | | `~/.local/bin` |
 
 ## Documents and reading
@@ -137,7 +135,3 @@ the file named in "Installed by".
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
 | ecc | L | **manual** (git) | | | `~/System/ecc`, Claude Code plugin |
-
-## To do
-
-- Decide: keep zoxide / eza / starship on the Mac? Move Miniforge envs to uv? Remove Ollama?
