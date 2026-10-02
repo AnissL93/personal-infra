@@ -1,0 +1,16 @@
+# Tools from language package managers; `bootstrap.sh tools` installs them.
+# Format: INSTALLER PACKAGE   (uv: uv tool install, cargo: cargo install, npm: npm install -g,
+#                              go: go install PACKAGE@latest, pip: pip install --user)
+# A line is skipped (with a note) when its installer is missing; install uv / rustup / nvm / go first.
+
+uv     basedpyright              # Python language server
+uv     yt-dlp                    # video downloads, used by mix-mpd
+cargo  rmpc                      # MPD client for mix-mpd
+cargo  impala                    # Wi-Fi TUI
+go     golang.org/x/tools/gopls  # Go language server
+npm    @vtsls/language-server    # TypeScript language server
+npm    typescript
+npm    @marp-team/marp-cli       # Markdown slides
+npm    emacs-lsp-proxy
+npm    9router
+pip    lunar_python              # 八字 status-bar block

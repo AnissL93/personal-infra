@@ -1,0 +1,12 @@
+# Apps downloaded into /opt/NAME; `bootstrap.sh opt` installs each one that is missing and links
+# its launcher into ~/.local/bin. Format: NAME URL LAUNCHER (path inside /opt/NAME, * allowed).
+# Archives (.tar.*) are unpacked as they are; an .AppImage LAUNCHER is kept as one file.
+# The folder is owned by you, so apps that update themselves (Firefox, Zotero) can.
+
+firefox      https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US  firefox/firefox
+zotero       https://www.zotero.org/download/client/dl?channel=release&platform=linux-x86_64  Zotero_linux-x86_64/zotero
+losslesscut  https://github.com/mifi/lossless-cut/releases/latest/download/LosslessCut-linux-x64.tar.bz2  LosslessCut-linux-x64/losslesscut
+wechat       https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.AppImage  WeChatLinux_x86_64.AppImage
+frpc         https://github.com/fatedier/frp/releases/download/v0.69.1/frp_0.69.1_linux_amd64.tar.gz  frp_*/frpc
+pycharm      https://download.jetbrains.com/python/pycharm-2026.2.1.tar.gz  pycharm-*/bin/pycharm
+rustrover    https://download.jetbrains.com/rustrover/RustRover-2026.1.1.tar.gz  RustRover-*/bin/rustrover

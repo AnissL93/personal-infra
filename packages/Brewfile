@@ -1,0 +1,33 @@
+# macOS packages; `bootstrap.sh packages` runs `brew bundle` on this file.
+
+tap "nikitabobko/tap"         # AeroSpace
+tap "koekeishiya/formulae"    # skhd
+tap "FelixKratz/formulae"     # JankyBorders
+tap "d12frosted/emacs-plus"   # Emacs
+
+# desktop: tiling WM, hotkeys, window borders, Rime input method
+cask "nikitabobko/tap/aerospace"
+brew "koekeishiya/formulae/skhd"
+brew "FelixKratz/formulae/borders", restart_service: :changed
+cask "squirrel-app"
+brew "librime"                # for emacs-rime
+
+# terminal and shell
+cask "alacritty"
+brew "fzf"
+brew "ripgrep"
+brew "htop"
+brew "btop"
+brew "jq"
+brew "wget"
+brew "thefuck"
+brew "zoxide"                 # smarter cd   (keep? see SOFTWARE.md, To do)
+brew "eza"                    # nicer ls
+brew "starship"               # prompt
+
+# editors and development
+brew "d12frosted/emacs-plus/emacs-plus@30"
+brew "neovim"
+brew "git"
+brew "gh"
+brew "uv"

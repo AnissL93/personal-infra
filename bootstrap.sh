@@ -1,26 +1,35 @@
 #!/usr/bin/env bash
-# Set up the whole desktop on a new (Debian/Ubuntu) machine from this repo.
+# Set up the whole computer from this repo, on Linux (Debian/Ubuntu, dwm desktop) or macOS.
 #
 # usage: ./bootstrap.sh [--dry-run] [STEP...]
-#   no STEP      run every step in order
+#   no STEP      run every step of this platform, in order
 #   --dry-run    print what would be done, change nothing
 #
-# steps (each is safe to re-run):
-#   packages   apt packages: X, build deps, desktop tools, input method, fonts
-#   suckless   build + install dwm, dmenu, dwmblocks, st, slock (and libxft-bgra if libXft is old)
-#   fonts      install the fonts from the assets repo (fonts/)
-#   links      symlink configs into $HOME (existing files are backed up as *.bak-<date>)
-#   shell      oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc
-#   input      fcitx5 + Rime: link ~/.local/share/fcitx5/rime -> rime/ (submodule)
-#   emacs      Doom Emacs
-#   python     lunar_python for the 八字 status block
-#   session    dwm entry for display managers (/usr/share/xsessions)
-#   keyboard   keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
-#   zathura    djvu/comics/ps plugins, build the mupdf plugin (epub, mobi), default app for documents
-#   theme      generate all colours, cursors, wallpaper (amber, or the current theme)
+# What gets installed is listed in files, not in this script:
+#   packages/apt.txt, packages/Brewfile   system packages (Linux / macOS)
+#   packages/tools.txt                    uv / cargo / go / npm / pip tools
+#   packages/opt.txt                      downloaded apps, into /opt (Linux)
+#   builds/*.sh                           things built from source (Linux)
+#   links.txt                             config symlinks, per platform
 #
-# Needs sudo for packages, suckless, session, keyboard and zathura.
-# Not automated (printed at the end): credentials, VS Code UI font, Firefox first start.
+# steps (each is safe to re-run), L = Linux, M = macOS:
+#   packages   L M  apt.txt / Brewfile
+#   suckless   L    build + install dwm, dmenu, dwmblocks, st, slock (and libxft-bgra if libXft is old)
+#   builds     L    builds/emacs.sh, builds/zathura-mupdf.sh, builds/mix-mpd.sh
+#   tools      L M  packages/tools.txt
+#   opt        L    packages/opt.txt
+#   fonts      L M  the fonts of the assets repo (github.com/AnissL93/assets, fonts/)
+#   links      L M  links.txt (+ Firefox profile files)
+#   shell      L    oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc
+#   emacs      L M  Doom Emacs
+#   session    L    dwm entry for display managers (/usr/share/xsessions)
+#   keyboard   L    keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
+#   defaults   L    zathura as the default document viewer
+#   services   M    start skhd and borders
+#   theme      L    generate all colours, cursors, wallpaper (amber, or the current theme)
+#
+# Needs sudo (Linux) for packages, suckless, builds, opt, session and keyboard.
+# Not automated (printed at the end): credentials, vendor apt repos, Firefox first start.
 
 set -euo pipefail
 
@@ -29,6 +38,11 @@ DOT="$ROOT/dotfiles"
 DESK="$ROOT/desktop/linux"
 DRY=""
 STAMP="$(date +%Y%m%d-%H%M%S)"
+case "$(uname -s)" in
+    Linux)  OS=L ;;
+    Darwin) OS=M ;;
+    *) echo "unsupported system: $(uname -s)" >&2; exit 1 ;;
+esac
 
 # ---- helpers ------------------------------------------------------------------------------
 
@@ -38,6 +52,7 @@ x() {                                   # run (or just print with --dry-run)
     [ -n "$DRY" ] || "$@"
 }
 have() { command -v "$1" >/dev/null 2>&1; }
+entries() { sed 's/#.*//' "$1" | awk 'NF'; }       # a list file without comments and blank lines
 
 link() {                                # link SOURCE TARGET: TARGET becomes a symlink to SOURCE
     local src="$1" dst="$2"
@@ -54,17 +69,16 @@ link() {                                # link SOURCE TARGET: TARGET becomes a s
 # ---- steps --------------------------------------------------------------------------------
 
 step_packages() {
-    say "apt packages"
-    x sudo apt-get update
-    x sudo apt-get install -y \
-        xorg xinit x11-xserver-utils xdotool xclip xsel feh xcompmgr \
-        build-essential pkg-config git curl autoconf automake libtool xutils-dev \
-        libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev libharfbuzz-dev \
-        libxrandr-dev libxext-dev libcrypt-dev fontconfig \
-        dunst libnotify-bin flameshot pulsemixer playerctl xbacklight redshift upower bc psmisc \
-        htop lf fzf zathura python3-pip python3-pil python3-numpy \
-        fcitx5 fcitx5-rime \
-        fonts-noto-color-emoji fonts-noto-cjk fonts-liberation
+    if [ "$OS" = L ]; then
+        say "apt packages (packages/apt.txt)"
+        x sudo apt-get update
+        # shellcheck disable=SC2046  # one word per package
+        x sudo apt-get install -y $(entries "$ROOT/packages/apt.txt")
+    else
+        say "Homebrew packages (packages/Brewfile)"
+        have brew || { echo "  install Homebrew first: https://brew.sh"; return 1; }
+        x brew bundle --file "$ROOT/packages/Brewfile"
+    fi
 }
 
 step_suckless() {
@@ -85,6 +99,52 @@ step_suckless() {
     fi
 }
 
+step_builds() {
+    local b
+    for b in emacs zathura-mupdf mix-mpd; do
+        say "build: $b (builds/$b.sh)"
+        x bash "$ROOT/builds/$b.sh"
+    done
+}
+
+step_tools() {
+    say "tools (packages/tools.txt)"
+    local inst pkg cmd
+    while read -r inst pkg; do
+        case "$inst" in
+            uv)    cmd=(uv tool install "$pkg") ;;
+            cargo) cmd=(cargo install "$pkg") ;;
+            go)    cmd=(go install "$pkg@latest") ;;
+            npm)   cmd=(npm install -g "$pkg") ;;
+            pip)   inst=python3; cmd=(python3 -m pip install --user --break-system-packages "$pkg") ;;
+            *)     echo "  unknown installer in tools.txt: $inst"; continue ;;
+        esac
+        if have "$inst"; then x "${cmd[@]}"; else echo "  skipped $pkg: $inst is not installed"; fi
+    done < <(entries "$ROOT/packages/tools.txt")
+}
+
+step_opt() {
+    say "apps into /opt (packages/opt.txt)"
+    local name url launcher dir file bin
+    while read -r name url launcher; do
+        dir="/opt/$name"
+        if [ ! -d "$dir" ]; then
+            file="${TMPDIR:-/tmp}/bootstrap-opt-$name"
+            x curl -fL -o "$file" "$url"
+            x sudo mkdir -p "$dir"
+            case "$launcher" in
+                *.AppImage) x sudo install -m 755 "$file" "$dir/$launcher" ;;
+                *)          x sudo tar -xf "$file" -C "$dir" ;;
+            esac
+            x rm -f "$file"
+            x sudo chown -R "$USER:" "$dir"                 # yours, so apps can update themselves
+        fi
+        # shellcheck disable=SC2086  # the launcher may hold a * (versioned folder)
+        bin="$(ls -d $dir/$launcher 2>/dev/null | head -1 || true)"
+        link "${bin:-$dir/$launcher}" "$HOME/.local/bin/$name"
+    done < <(entries "$ROOT/packages/opt.txt")
+}
+
 step_fonts() {
     say "fonts (github.com/AnissL93/assets, fonts/)"
     # the assets clone if there is one, else a sparse clone holding only fonts/
@@ -95,32 +155,25 @@ step_fonts() {
         x git -C "$src" sparse-checkout set fonts
         x git -C "$src" pull -q
     fi
-    link "$src/fonts" "$HOME/.local/share/fonts/personal-infra"
-    x fc-cache -f
+    if [ "$OS" = L ]; then
+        link "$src/fonts" "$HOME/.local/share/fonts/personal-infra"
+        x fc-cache -f
+    else                                    # macOS does not reliably follow a linked folder here
+        x mkdir -p "$HOME/Library/Fonts/personal-infra"
+        x rsync -a --delete --exclude '*.md' --exclude '*.txt' "$src/fonts/" "$HOME/Library/Fonts/personal-infra/"
+    fi
 }
 
 step_links() {
-    say "config symlinks"
-    # scripts and configs refer to these paths
-    [ "$ROOT/dotfiles" -ef "$HOME/System/dotfiles" ] || link "$ROOT/dotfiles" "$HOME/System/dotfiles"
+    say "config symlinks (links.txt)"
+    [ -e "$ROOT/rime/default.yaml" ] || x git -C "$ROOT" submodule update --init rime
+    local pf src dst
+    while read -r pf src dst; do
+        [[ "$pf" == *"$OS"* ]] || continue
+        link "$ROOT/$src" "${dst/#\~/$HOME}"
+    done < <(entries "$ROOT/links.txt")
 
-    link "$DESK/x11/xinitrc"           "$HOME/.xinitrc"
-    link "$DESK/x11/Xresources"        "$HOME/.Xresources"
-    link "$DOT/doom"                   "$HOME/.config/doom"
-    link "$DESK/dunst"                 "$HOME/.config/dunst"
-    link "$DESK/scripts"               "$HOME/.config/Scripts"
-    link "$DOT/alacritty/linux.toml"   "$HOME/.config/alacritty/alacritty.toml"
-    link "$DESK/fontconfig/fonts.conf" "$HOME/.config/fontconfig/fonts.conf"
-    link "$DESK/gtk-3.0/settings.ini"  "$HOME/.config/gtk-3.0/settings.ini"
-    link "$DESK/redshift.conf"         "$HOME/.config/redshift.conf"
-    link "$DOT/zathura/zathurarc"      "$HOME/.config/zathura/zathurarc"
-    link "$DOT/nvim-config"            "$HOME/.config/nvim"
-    link "$DOT/vscode/settings.json"   "$HOME/.config/Code/User/settings.json"
-    link "$DOT/themes/theme"           "$HOME/.local/bin/theme"
-    for f in set-en-font set-cjk-font font-preset vscode-ui-font ff-profile; do
-        link "$DESK/bin/$f" "$HOME/.local/bin/$f"
-    done
-
+    [ "$OS" = L ] || return 0
     local ff
     if ff="$("$DESK/bin/ff-profile")"; then
         link "$DOT/firefox/user.js"         "$ff/user.js"
@@ -145,28 +198,15 @@ step_shell() {
     fi
 }
 
-step_input() {
-    say "fcitx5 + Rime"
-    [ -e "$ROOT/rime/default.yaml" ] || x git -C "$ROOT" submodule update --init rime
-    link "$ROOT/rime" "$HOME/.local/share/fcitx5/rime"
-}
-
 step_emacs() {
     say "Doom Emacs"
-    have emacs || x sudo apt-get install -y emacs
+    have emacs || { echo "  no emacs yet: run the builds step (Linux) or packages (macOS) first"; return 1; }
     [ -d "$HOME/.config/emacs" ] || x git clone --depth 1 https://github.com/doomemacs/doomemacs "$HOME/.config/emacs"
     if [ -d "$HOME/.config/emacs/.local" ]; then
         x "$HOME/.config/emacs/bin/doom" sync             # already installed
     else
         x "$HOME/.config/emacs/bin/doom" install --no-config --force
     fi
-}
-
-step_python() {
-    say "python packages"
-    python3 -c 'import lunar_python' 2>/dev/null && return
-    x python3 -m pip install --user lunar_python \
-        || x python3 -m pip install --user --break-system-packages lunar_python
 }
 
 step_session() {
@@ -176,35 +216,13 @@ step_session() {
 
 step_keyboard() {
     say "keyd keyboard remap"
-    dpkg -s keyd >/dev/null 2>&1 || x sudo apt-get install -y keyd
     x sudo ln -sfn "$ROOT/keymap/linux/keyd.conf" /etc/keyd/default.conf
     x sudo systemctl enable keyd
     x sudo systemctl restart keyd                     # loads the config
 }
 
-step_zathura() {
-    say "zathura plugins + default document viewer"
-    x sudo apt-get install -y zathura zathura-djvu zathura-cb zathura-ps zathura-dev libmupdf-dev meson ninja-build
-    # epub/mobi/fb2/xps: zathura-pdf-mupdf is not packaged by Ubuntu, build it
-    local plugdir src zv tag
-    plugdir="$(pkg-config --variable=plugindir zathura 2>/dev/null || echo /usr/lib/x86_64-linux-gnu/zathura)"
-    if [ ! -e "$plugdir/libpdf-mupdf.so" ]; then
-        src="${XDG_CACHE_HOME:-$HOME/.cache}/zathura-pdf-mupdf"
-        [ -d "$src" ] || x git clone https://github.com/pwmt/zathura-pdf-mupdf "$src"
-        if [ -z "$DRY" ]; then
-            # ponytail: newest tag not newer than zathura (both date-versioned); pin by hand if a build fails
-            zv="$(pkg-config --modversion zathura)"
-            tag="$({ git -C "$src" tag | grep -E '^[0-9]{4}\.'; echo "$zv ZATHURA"; } | sort -V | sed '/ ZATHURA$/,$d' | tail -1)"
-            x git -C "$src" checkout -q -f "$tag"
-            # Ubuntu's mupdf.pc reports an older version than the installed headers/lib
-            x sed -i 's/^mupdf_required_version_minor = .*/mupdf_required_version_minor = 0/' "$src/meson.build"
-        fi
-        x rm -rf "$src/build"
-        x meson setup "$src/build" "$src" --prefix=/usr -Dbuildtype=release
-        x ninja -C "$src/build"
-        x sudo ninja -C "$src/build" install
-    fi
-    # images stay with feh
+step_defaults() {
+    say "default apps: zathura for documents (images stay with feh)"
     x xdg-mime default org.pwmt.zathura.desktop \
         application/pdf application/epub+zip application/x-mobipocket-ebook application/x-fictionbook \
         application/x-fictionbook+xml application/oxps application/vnd.ms-xpsdocument \
@@ -212,6 +230,12 @@ step_zathura() {
         application/postscript application/x-gzpostscript application/x-bzpostscript image/x-eps \
         application/vnd.comicbook+zip application/vnd.comicbook-rar application/x-cbz application/x-cbr \
         application/x-cb7 application/x-cbt
+}
+
+step_services() {
+    say "skhd and borders"
+    x skhd --start-service
+    x brew services restart borders
 }
 
 step_theme() {
@@ -225,27 +249,41 @@ step_theme() {
 }
 
 manual_steps() {
-    cat <<'EOF'
+    if [ "$OS" = L ]; then cat <<'EOF'
 
 Left to do by hand:
-  - credentials (never in git): ~/System/dotfiles/doom/secrets.el, ~/System/dotfiles/tokens/,
-    ~/.password-store, ~/.config/x2ray/*.json, ssh keys
+  - credentials (never in git): ~/System/dotfiles/doom/secrets.el, ~/.password-store,
+    ~/.config/x2ray/*.json, ssh keys (mix-mpd is a private repo: the builds step needs them)
+  - vendor apt repos, then their packages: see the end of packages/apt.txt
+  - language toolchains before `tools`: uv, rustup, nvm (Node), Go (/usr/local/go)
   - VS Code: install it, then `vscode-ui-font on` (sudo) for the pixel UI font
   - Firefox: start it once, then `./bootstrap.sh links theme`
-  - Obsidian: vault paths in OBSIDIAN_VAULTS in dotfiles/themes/theme
   - then log in on a TTY and run `startx`
 EOF
+    else cat <<'EOF'
+
+Left to do by hand:
+  - before anything else: xcode-select --install, then Homebrew (https://brew.sh)
+  - credentials: ssh keys, ~/System/dotfiles/doom/secrets.el
+  - open AeroSpace once and allow it (and skhd) in System Settings > Privacy > Accessibility
+  - Squirrel: add it in System Settings > Keyboard > Input Sources, then "Deploy" from its menu
+EOF
+    fi
 }
 
 # ---- main ---------------------------------------------------------------------------------
 
-ALL=(packages suckless fonts links shell input emacs python session keyboard zathura theme)
+if [ "$OS" = L ]; then
+    ALL=(packages suckless builds tools opt fonts links shell emacs session keyboard defaults theme)
+else
+    ALL=(packages tools fonts links emacs services)
+fi
 steps=()
 for a in "$@"; do
     case "$a" in
         --dry-run) DRY=1 ;;
-        -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
-        *) [[ " ${ALL[*]} " == *" $a "* ]] || { echo "unknown step: $a (steps: ${ALL[*]})" >&2; exit 1; }
+        -h|--help) sed -n '2,32p' "$0"; exit 0 ;;
+        *) [[ " ${ALL[*]} " == *" $a "* ]] || { echo "unknown step: $a (steps here: ${ALL[*]})" >&2; exit 1; }
            steps+=("$a") ;;
     esac
 done

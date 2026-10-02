@@ -1,0 +1,38 @@
+# Linux packages from Ubuntu's own repos; `bootstrap.sh packages` installs them all.
+# One package per line (or several); text after # is ignored.
+
+# X session and the dwm desktop
+xorg xinit x11-xserver-utils xdotool xclip xsel feh xcompmgr
+dunst libnotify-bin flameshot pulsemixer playerctl xbacklight redshift upower bc psmisc
+fcitx5 fcitx5-rime fcitx5-config-qt keyd librime-dev   # librime-dev: emacs-rime
+fonts-noto-color-emoji fonts-noto-cjk fonts-liberation fontconfig
+
+# building the suckless tools (desktop/linux)
+build-essential pkg-config git curl autoconf automake libtool xutils-dev
+libx11-dev libxft-dev libxinerama-dev libx11-xcb-dev libxcb-res0-dev libharfbuzz-dev
+libxrandr-dev libxext-dev libcrypt-dev
+
+# terminal and shell
+alacritty zsh tmux ripgrep fzf lf htop
+
+# editors (Emacs itself is built: builds/emacs.sh)
+neovim
+
+# development
+gcc-14 g++-14 clang clangd clang-format cmake meson ninja-build ccache gh minicom
+
+# documents: zathura + plugins (EPUB/MOBI: builds/zathura-mupdf.sh)
+zathura zathura-djvu zathura-cb zathura-ps
+
+# media
+mpv vlc ffmpeg blender
+
+# internet, sync, remote
+qbittorrent sshfs x11vnc
+
+# python for the `theme` and `pixelate` scripts and status-bar blocks
+python3-pip python3-pil python3-numpy
+
+# From vendor apt repos or .deb files; not installed by bootstrap (add the repo by hand first):
+#   code (VS Code), obsidian, docker-ce + nvidia-container-toolkit, tailscale, syncthing,
+#   google-cloud-cli, cuda-toolkit-13 + nvidia-driver-595-open, baidunetdisk

@@ -23,6 +23,8 @@ git add dotfiles && git commit -m "Bump dotfiles"
 ```
 
 Every installed app, how it is installed and where its config lives: [`SOFTWARE.md`](SOFTWARE.md).
+What bootstrap installs is listed in `packages/` (apt, Brewfile, tools, `/opt` apps), `builds/`
+(built from source) and `links.txt` (config symlinks, per platform).
 
 ## New machine
 

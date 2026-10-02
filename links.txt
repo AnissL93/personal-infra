@@ -1,0 +1,43 @@
+# Config symlinks; `bootstrap.sh links` creates the rows for this machine's platform.
+# Format: PLATFORM SOURCE TARGET
+#   PLATFORM  L (Linux), M (macOS) or LM (both)
+#   SOURCE    path in this repo; TARGET: where it is linked (~ = $HOME). No spaces in paths.
+# An existing TARGET is kept as TARGET.bak-<date>. Firefox's profile files are linked by the
+# step itself (the profile folder name differs per machine).
+
+# paths that scripts refer to
+LM  dotfiles                                  ~/System/dotfiles
+
+# X session and the dwm desktop
+L   desktop/linux/x11/xinitrc                 ~/.xinitrc
+L   desktop/linux/x11/Xresources              ~/.Xresources
+L   desktop/linux/dunst                       ~/.config/dunst
+L   desktop/linux/scripts                     ~/.config/Scripts
+L   desktop/linux/fontconfig/fonts.conf       ~/.config/fontconfig/fonts.conf
+L   desktop/linux/gtk-3.0/settings.ini        ~/.config/gtk-3.0/settings.ini
+L   desktop/linux/redshift.conf               ~/.config/redshift.conf
+L   desktop/linux/bin/set-en-font             ~/.local/bin/set-en-font
+L   desktop/linux/bin/set-cjk-font            ~/.local/bin/set-cjk-font
+L   desktop/linux/bin/font-preset             ~/.local/bin/font-preset
+L   desktop/linux/bin/vscode-ui-font          ~/.local/bin/vscode-ui-font
+L   desktop/linux/bin/ff-profile              ~/.local/bin/ff-profile
+L   desktop/linux/systemd/mix-mpd.service     ~/.config/systemd/user/mix-mpd.service
+
+# macOS desktop
+M   desktop/mac/aerospace                     ~/.config/aerospace
+M   desktop/mac/skhd                          ~/.config/skhd
+M   desktop/mac/borders                       ~/.config/borders
+
+# input method: fcitx5 (Linux) and Squirrel (macOS) share the Rime data
+L   rime                                      ~/.local/share/fcitx5/rime
+M   rime                                      ~/Library/Rime
+
+# apps
+L   dotfiles/alacritty/linux.toml             ~/.config/alacritty/alacritty.toml
+M   dotfiles/alacritty/alacritty.toml         ~/.config/alacritty/alacritty.toml
+LM  dotfiles/doom                             ~/.config/doom
+LM  dotfiles/nvim-config                      ~/.config/nvim
+L   dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
+L   dotfiles/vscode/settings.json             ~/.config/Code/User/settings.json
+L   dotfiles/themes/theme                     ~/.local/bin/theme
+LM  dotfiles/claude/skills/theme-from-picture ~/.claude/skills/theme-from-picture
