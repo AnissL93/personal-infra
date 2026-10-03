@@ -2,6 +2,8 @@
 
 My whole computer setup in one place. Each part is its own repo, added here as a submodule.
 
+**Website + theme gallery: <https://anissl93.github.io/personal-infra/>** (`docs/`, regenerate with `docs/build.py`).
+
 | Path | Repo | What |
 |---|---|---|
 | `dotfiles/` | `github.com:AnissL93/Dotfiles` (public) | configs, scripts, colour themes (`themes/`), **user manual: [`dotfiles/MANUAL.md`](dotfiles/MANUAL.md)** |

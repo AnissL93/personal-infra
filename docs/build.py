@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Regenerate the GitHub Pages data: docs/data.js, docs/thumbs/*.webp, docs/keymap.svg.
+
+usage: docs/build.py      (run after adding themes or scripts, then commit docs/)
+Wallpapers are read from ~/.local/share/wallpapers (`theme` downloads them there).
+"""
+import json
+import os
+import re
+import shutil
+import sys
+from importlib.machinery import SourceFileLoader
+
+from PIL import Image
+
+sys.dont_write_bytecode = True
+ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+DOCS = os.path.join(ROOT, "docs")
+THEMES = os.path.join(ROOT, "dotfiles", "themes")
+WALLS = os.path.expanduser("~/.local/share/wallpapers")
+theme = SourceFileLoader("theme", os.path.join(THEMES, "theme")).load_module()
+
+KEYS = ["name", "mode", "bg", "bg_alt", "bg_hl", "sel", "dim", "mid", "fg", "bright", "accent", "accent_fg",
+        "bar", "bar_fg", "border", "comment", "string", "number", "keyword", "function", "type", "punct",
+        "err", "warn", "ok"] + [f"color{i}" for i in range(16)]
+
+
+def blurb(path):
+    """First comment paragraph of a file, minus shebang, usage and colour-maths notes."""
+    out = []
+    for line in open(path, errors="replace").readlines()[:12]:
+        s = line.strip()
+        if s.startswith("#!") or (not out and s in ("", "#")):
+            continue
+        m = re.match(r"#+\s?(.*)", s) if s.startswith("#") else None
+        if not m or not m.group(1) or re.match(r"(usage|design|color\d)", m.group(1), re.I):
+            break
+        out.append(m.group(1))
+    return " ".join(out)
+
+
+def thumb(wall):
+    """640px webp of a wallpaper; returns its docs-relative path, or None if the wallpaper is missing."""
+    src, rel = os.path.join(WALLS, wall), f"thumbs/{wall.rsplit('.', 1)[0]}.webp"
+    dst = os.path.join(DOCS, rel)
+    if not os.path.exists(src):
+        print(f"missing wallpaper {wall}", file=sys.stderr)
+        return None
+    if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src):
+        im = Image.open(src).convert("RGB")
+        im.thumbnail((640, 640))
+        im.save(dst, "WEBP", quality=72)
+    return rel
+
+
+def themes():
+    out = []
+    for n in theme.themes():
+        t = theme.load(n)
+        wall = t.get("wallpaper_2560")
+        out.append({"id": n, **{k: t[k] for k in KEYS if k in t},
+                    "family": n.split("-")[0], "pixel": n.endswith("-pixel"),
+                    "about": blurb(os.path.join(THEMES, n + ".conf")),
+                    "wall": wall, "wall_wide": t.get("wallpaper_3440"), "thumb": wall and thumb(wall)})
+    return out
+
+
+def scripts(rel_dir, repo, repo_dir):
+    d = os.path.join(ROOT, rel_dir)
+    code = re.compile(r"[=;]|shellcheck")   # commented-out code or data, not a description
+    return [{"name": f, "about": "" if code.search(b := blurb(os.path.join(d, f))) else b,
+             "url": f"https://github.com/AnissL93/{repo}/blob/main/{repo_dir}/{f}"}
+            for f in sorted(os.listdir(d)) if os.path.isfile(os.path.join(d, f)) and not f.startswith(".")]
+
+
+if __name__ == "__main__":
+    os.makedirs(os.path.join(DOCS, "thumbs"), exist_ok=True)
+    shutil.copy(os.path.join(ROOT, "keymap", "keymap.svg"), os.path.join(DOCS, "keymap.svg"))
+    data = {"themes": themes(), "scripts": {
+        "desktop/linux/scripts": scripts("desktop/linux/scripts", "desktop", "linux/scripts"),
+        "desktop/linux/bin": scripts("desktop/linux/bin", "desktop", "linux/bin"),
+        "builds": scripts("builds", "personal-infra", "builds"),
+    }}
+    with open(os.path.join(DOCS, "data.js"), "w") as f:
+        f.write("window.DATA = " + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
+    print(f"{len(data['themes'])} themes, {sum(map(len, data['scripts'].values()))} scripts")
