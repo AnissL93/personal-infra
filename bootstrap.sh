@@ -166,7 +166,7 @@ step_fonts() {
 
 step_links() {
     say "config symlinks (links.txt)"
-    [ -e "$ROOT/rime/default.yaml" ] || x git -C "$ROOT" submodule update --init rime
+    [ -e "$ROOT/rime/cn_dicts/ext/flypy_sghot.dict.yaml" ] || x git -C "$ROOT" submodule update --init --recursive rime
     local pf src dst
     while read -r pf src dst; do
         [[ "$pf" == *"$OS"* ]] || continue
