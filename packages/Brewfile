@@ -10,7 +10,14 @@ cask "nikitabobko/tap/aerospace"
 brew "koekeishiya/formulae/skhd"
 brew "FelixKratz/formulae/borders", restart_service: :changed
 cask "squirrel-app"
+cask "karabiner-elements"     # keyboard layout (keymap/mac)
 brew "librime"                # for emacs-rime
+brew "FelixKratz/formulae/sketchybar"   # status bar (desktop/mac/sketchybar), dwmblocks on Linux
+brew "pinentry-mac"           # GPG passphrase dialog, for pass run from scripts
+cask "flux-app"               # redshift
+brew "nowplaying-cli"         # playerctl
+brew "switchaudio-osx"        # pulsemixer
+brew "duti"                   # default apps (bootstrap step defaults)
 
 # terminal and shell
 cask "alacritty"
@@ -21,10 +28,44 @@ brew "btop"
 brew "jq"
 brew "wget"
 brew "thefuck"
+brew "tmux"
+brew "lf"
+brew "pass"
+brew "rclone"
+brew "bitwarden-cli"
 
 # editors and development
-brew "d12frosted/emacs-plus/emacs-plus@30"
+brew "d12frosted/emacs-plus/emacs-plus@31"
 brew "neovim"
 brew "git"
 brew "gh"
 brew "uv"
+brew "go"                     # toolchains for packages/tools.txt
+brew "node"
+brew "rust"
+
+# documents and media
+cask "skim"                   # zathura (sioyek: Homebrew disabled it, fails Gatekeeper)
+cask "zotero"
+cask "obsidian"
+brew "hledger"
+brew "mpv"
+brew "ffmpeg"
+cask "vlc"
+cask "losslesscut"
+cask "blender"
+
+# IDEs
+cask "visual-studio-code"
+cask "pycharm"
+cask "rustrover"
+cask "docker-desktop"
+
+# internet, sync, chat
+cask "firefox"
+cask "google-chrome"
+cask "syncthing-app"
+cask "tailscale-app"
+cask "bitwarden"
+cask "localsend"
+cask "wechat"

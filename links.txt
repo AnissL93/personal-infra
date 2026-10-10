@@ -3,7 +3,8 @@
 #   PLATFORM  L (Linux), M (macOS) or LM (both)
 #   SOURCE    path in this repo; TARGET: where it is linked (~ = $HOME). No spaces in paths.
 # An existing TARGET is kept as TARGET.bak-<date>. Firefox's profile files are linked by the
-# step itself (the profile folder name differs per machine).
+# step itself (the profile folder name differs per machine), and so are macOS targets under
+# ~/Library/Application Support (VS Code).
 
 # paths that scripts refer to
 LM  dotfiles                                  ~/System/dotfiles
@@ -27,6 +28,14 @@ L   desktop/linux/systemd/mix-mpd.service     ~/.config/systemd/user/mix-mpd.ser
 M   desktop/mac/aerospace                     ~/.config/aerospace
 M   desktop/mac/skhd                          ~/.config/skhd
 M   desktop/mac/borders                       ~/.config/borders
+M   desktop/mac/sketchybar                    ~/.config/sketchybar
+M   desktop/mac/bin/getpass                   ~/.local/bin/getpass
+M   desktop/mac/bin/dmenu_run                 ~/.local/bin/dmenu_run
+M   desktop/mac/gnupg/gpg-agent.conf          ~/.gnupg/gpg-agent.conf
+
+# keyboard: Karabiner rules generated from keymap/linux/keyd.conf (enable them in Karabiner)
+M   keymap/mac/keymap-mac.json                ~/.config/karabiner/assets/complex_modifications/keymap-mac.json
+M   keymap/mac/keymap.json                    ~/.config/karabiner/assets/complex_modifications/keymap.json
 
 # input method: fcitx5 (Linux) and Squirrel (macOS) share the Rime data
 L   rime                                      ~/.local/share/fcitx5/rime
@@ -39,5 +48,5 @@ LM  dotfiles/doom                             ~/.config/doom
 LM  dotfiles/nvim-config                      ~/.config/nvim
 L   dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
 L   dotfiles/vscode/settings.json             ~/.config/Code/User/settings.json
-L   dotfiles/themes/theme                     ~/.local/bin/theme
+LM  dotfiles/themes/theme                     ~/.local/bin/theme
 LM  dotfiles/claude/skills/theme-from-picture ~/.claude/skills/theme-from-picture

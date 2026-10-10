@@ -15,7 +15,8 @@
 # steps (each is safe to re-run), L = Linux, M = macOS:
 #   packages   L M  apt.txt / Brewfile
 #   suckless   L    build + install dwm, dmenu, dwmblocks, st, slock (and libxft-bgra if libXft is old)
-#   builds     L    builds/emacs.sh, builds/zathura-mupdf.sh, builds/mix-mpd.sh
+#   builds     L M  builds/emacs.sh, builds/zathura-mupdf.sh, builds/mix-mpd.sh (Linux);
+#                   dmenu from desktop/mac/dmenu/dmenu.swift into ~/.local/bin (macOS)
 #   tools      L M  packages/tools.txt
 #   opt        L    packages/opt.txt
 #   fonts      L M  the fonts of the assets repo (github.com/AnissL93/assets, fonts/)
@@ -24,9 +25,9 @@
 #   emacs      L M  Doom Emacs
 #   session    L    dwm entry for display managers (/usr/share/xsessions)
 #   keyboard   L    keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
-#   defaults   L    zathura as the default document viewer
-#   services   M    start skhd and borders
-#   theme      L    generate all colours, cursors, wallpaper (amber, or the current theme)
+#   defaults   L M  zathura (Linux) / Skim (macOS) as the default document viewer
+#   services   M    start skhd, borders and sketchybar
+#   theme      L M  generate all colours, cursors, wallpaper (amber, or the current theme)
 #
 # Needs sudo (Linux) for packages, suckless, builds, opt, session and keyboard.
 # Not automated (printed at the end): credentials, vendor apt repos, Firefox first start.
@@ -77,6 +78,9 @@ step_packages() {
     else
         say "Homebrew packages (packages/Brewfile)"
         have brew || { echo "  install Homebrew first: https://brew.sh"; return 1; }
+        # Homebrew loads formulae from third-party taps only once they are trusted
+        # shellcheck disable=SC2046  # one word per tap
+        x brew trust $(sed -n 's/^tap "\([^"]*\)".*/\1/p' "$ROOT/packages/Brewfile")
         x brew bundle --file "$ROOT/packages/Brewfile"
     fi
 }
@@ -100,6 +104,12 @@ step_suckless() {
 }
 
 step_builds() {
+    if [ "$OS" = M ]; then
+        say "build: dmenu (desktop/mac/dmenu/dmenu.swift)"
+        x mkdir -p "$HOME/.local/bin"
+        x swiftc -O "$ROOT/desktop/mac/dmenu/dmenu.swift" -o "$HOME/.local/bin/dmenu"
+        return
+    fi
     local b
     for b in emacs zathura-mupdf mix-mpd; do
         say "build: $b (builds/$b.sh)"
@@ -109,8 +119,9 @@ step_builds() {
 
 step_tools() {
     say "tools (packages/tools.txt)"
-    local inst pkg cmd
-    while read -r inst pkg; do
+    local pf inst pkg cmd
+    while read -r pf inst pkg; do
+        [[ "$pf" == *"$OS"* ]] || continue
         case "$inst" in
             uv)    cmd=(uv tool install "$pkg") ;;
             cargo) cmd=(cargo install "$pkg") ;;
@@ -173,7 +184,10 @@ step_links() {
         link "$ROOT/$src" "${dst/#\~/$HOME}"
     done < <(entries "$ROOT/links.txt")
 
-    [ "$OS" = L ] || return 0
+    if [ "$OS" = M ]; then                  # a target with spaces, which links.txt cannot hold
+        link "$DOT/vscode/settings-mac.json" "$HOME/Library/Application Support/Code/User/settings.json"
+    fi
+
     local ff
     if ff="$("$DESK/bin/ff-profile")"; then
         link "$DOT/firefox/user.js"         "$ff/user.js"
@@ -222,6 +236,11 @@ step_keyboard() {
 }
 
 step_defaults() {
+    if [ "$OS" = M ]; then
+        say "default apps: Skim for PDF"
+        x duti -s net.sourceforge.skim-app.skim .pdf all
+        return
+    fi
     say "default apps: zathura for documents (images stay with feh)"
     x xdg-mime default org.pwmt.zathura.desktop \
         application/pdf application/epub+zip application/x-mobipocket-ebook application/x-fictionbook \
@@ -233,15 +252,16 @@ step_defaults() {
 }
 
 step_services() {
-    say "skhd and borders"
+    say "skhd, borders and sketchybar"
     x skhd --start-service
     x brew services restart borders
+    x brew services restart sketchybar
 }
 
 step_theme() {
     say "colour theme"
     local t; t="$(cat "$HOME/.config/theme/current" 2>/dev/null || echo amber)"
-    if [ -n "${DISPLAY:-}" ]; then
+    if [ "$OS" = M ] || [ -n "${DISPLAY:-}" ]; then
         x "$DOT/themes/theme" "$t"
     else
         say "not in X: the theme ($t) is generated on the first startx (see xinitrc)"
@@ -264,8 +284,14 @@ EOF
 
 Left to do by hand:
   - before anything else: xcode-select --install, then Homebrew (https://brew.sh)
+  - apps installed by hand before: run the packages step once as
+    HOMEBREW_CASK_OPTS=--adopt ./bootstrap.sh packages   (else brew stops at "already an App")
   - credentials: ssh keys, ~/System/dotfiles/doom/secrets.el
   - open AeroSpace once and allow it (and skhd) in System Settings > Privacy > Accessibility
+  - Karabiner-Elements: open it, allow its driver, then Complex Modifications > Add rule >
+    enable the "keymap" rules for your keyboard (right_command = Mac layout, right_alt = Windows layout)
+  - SketchyBar: allow it in Privacy > Accessibility if asked
+  - VS Code: Command Palette > "Shell Command: Install 'code' command in PATH" (theme uses `code`)
   - Squirrel: add it in System Settings > Keyboard > Input Sources, then "Deploy" from its menu
 EOF
     fi
@@ -276,7 +302,7 @@ EOF
 if [ "$OS" = L ]; then
     ALL=(packages suckless builds tools opt fonts links shell emacs session keyboard defaults theme)
 else
-    ALL=(packages tools fonts links emacs services)
+    ALL=(packages tools builds fonts links emacs defaults services theme)
 fi
 steps=()
 for a in "$@"; do

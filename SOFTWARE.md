@@ -28,7 +28,7 @@ the file named in "Installed by".
 | GTK settings | L | | `desktop/linux/gtk-3.0/` | | cursor only |
 | desktop scripts | L | | `desktop/linux/scripts/`, `desktop/linux/bin/` | | status bar blocks, dmenu helpers, font tools |
 | fonts | LM | step `fonts` | `github.com:AnissL93/assets` (`fonts/`) | | one folder per family with its licence; StarLovePencil local only (licence unknown) |
-| wallpapers | L | `theme` (downloads on first use) | `github.com:AnissL93/assets` | ✓ | cache `~/.local/share/wallpapers`; other collections are forks, see the assets README |
+| wallpapers | LM | `theme` (downloads on first use) | `github.com:AnissL93/assets` | ✓ | cache `~/.local/share/wallpapers`; Linux: feh, macOS: osascript (one image on all screens); other collections are forks, see the assets README |
 
 ## Desktop: macOS
 
@@ -36,8 +36,15 @@ the file named in "Installed by".
 |---|---|---|---|---|---|
 | AeroSpace | M | `Brewfile` | `desktop/mac/aerospace/` | | tiling WM |
 | skhd | M | `Brewfile`, step `services` | `desktop/mac/skhd/` | | hotkeys |
-| JankyBorders | M | `Brewfile`, step `services` | `desktop/mac/borders/` | | |
+| JankyBorders | M | `Brewfile`, step `services` | `desktop/mac/borders/` | ✓ | |
 | Squirrel + librime | M | `Brewfile` | `rime/` (`~/Library/Rime`) | | librime for emacs-rime |
+| SketchyBar | M | `Brewfile`, step `services` | `desktop/mac/sketchybar/` | ✓ | status bar like dwm + dwmblocks |
+| Karabiner-Elements | M | `Brewfile` | `keymap/mac/` | | rules generated from `keymap/linux/keyd.conf` |
+| dmenu (own, Swift) | M | step `builds` | `desktop/mac/dmenu/dmenu.swift` | ✓ | dwm's dmenu on macOS: bar over SketchyBar, theme bar colours, same flags; `dmenu_run` (AeroSpace `cmd-d`) and `getpass` in `desktop/mac/bin/` |
+| pinentry-mac | M | `Brewfile` | `desktop/mac/gnupg/gpg-agent.conf` | | GPG passphrase dialog, so `pass` works without a terminal |
+| f.lux | M | `Brewfile` | | | redshift on Linux |
+| nowplaying-cli, switchaudio-osx | M | `Brewfile` | | | playerctl / pulsemixer on Linux |
+| duti | M | `Brewfile`, step `defaults` | | | default apps |
 
 ## Terminal and shell
 
@@ -46,10 +53,10 @@ the file named in "Installed by".
 | alacritty | LM | `apt.txt` / `Brewfile` | `dotfiles/alacritty/` | ✓ | `linux.toml` / `alacritty.toml` |
 | bash + oh-my-bash | L | step `shell` | `dotfiles/bash/` | ✓ | prompt colours |
 | zsh | LM | `apt.txt` | | | macOS default shell; Mac shell config not in git |
-| tmux | L | `apt.txt` | | | no config |
+| tmux | LM | `apt.txt` / `Brewfile` | | | no config |
 | fzf | LM | `apt.txt` / `Brewfile` | | | also `~/System/fzf` (git clone) |
 | ripgrep | LM | `apt.txt` / `Brewfile` | | | |
-| lf | L | `apt.txt` | `dotfiles/lf/` | | **not linked** |
+| lf | LM | `apt.txt` / `Brewfile` | `dotfiles/lf/` | | **not linked** |
 | htop / btop | LM | `apt.txt` / `Brewfile` | | | |
 | thefuck | M | `Brewfile` | `dotfiles/thefuck/` | | |
 | jq, wget | M | `Brewfile` | | | |
@@ -60,12 +67,12 @@ the file named in "Installed by".
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| Emacs 30.2 | LM | `builds/emacs.sh` / `Brewfile` (emacs-plus) | | | Linux: `/usr/local`, Lucid, native-comp |
+| Emacs | LM | `builds/emacs.sh` / `Brewfile` (emacs-plus@31) | | | Linux: 30.2 in `/usr/local`, Lucid, native-comp; macOS: 31 |
 | Doom Emacs | LM | step `emacs` | `dotfiles/doom/` | ✓ | |
 | Neovim | LM | `apt.txt` / `Brewfile` | `dotfiles/nvim-config/` | ✓ | |
-| VS Code | L | **manual** (vendor repo) | `dotfiles/vscode/` | ✓ | |
-| PyCharm, RustRover | L | `opt.txt` | | | `/opt/pycharm`, `/opt/rustrover` |
-| Obsidian | L | **manual** (deb) | `dotfiles/obsidian/` | ✓ | + `obsidian-cli` in `~/.local/bin` |
+| VS Code | LM | **manual** (vendor repo) / `Brewfile` | `dotfiles/vscode/` | ✓ | macOS: `settings-mac.json` (Retina sizes, no UI zoom), linked by step `links` (path has spaces) |
+| PyCharm, RustRover | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/pycharm`, `/opt/rustrover` |
+| Obsidian | LM | **manual** (deb) / `Brewfile` | `dotfiles/obsidian/` | ✓ | themed vault: Linux `/srv/sync/WorkNotes`, macOS `~/Sync/WorkNotes`; + `obsidian-cli` in `~/.local/bin` (Linux) |
 
 ## Development
 
@@ -74,11 +81,11 @@ the file named in "Installed by".
 | gcc/g++ 14, clang, clangd, clang-format | L | `apt.txt` | | | |
 | cmake, meson, ninja, ccache | L | `apt.txt` | | | |
 | git, gh | LM | `apt.txt` / `Brewfile` | | | |
-| Go + gopls | L | **manual** (Go) + `tools.txt` (gopls) | | | `/usr/local/go` |
-| Rust (rustup) + rust-analyzer | L | **manual** | | | `~/.cargo` |
+| Go + gopls | LM | **manual** (Go) / `Brewfile` + `tools.txt` (gopls) | | | Linux: `/usr/local/go` |
+| Rust + rust-analyzer | LM | **manual** (rustup) / `Brewfile` (rust) | | | `~/.cargo` |
 | uv + basedpyright | LM | **manual** (Linux: astral.sh installer, `~/.local/bin/uv`) / `Brewfile` (uv) + `tools.txt` | | | every Python project and tool; old conda envs exported to `~/System/backups/conda-envs/` |
-| Node (nvm) + npm globals | L | **manual** (nvm) + `tools.txt` | | | vtsls, typescript, marp-cli, emacs-lsp-proxy, 9router |
-| Docker + nvidia-container-toolkit | L | **manual** (vendor repo) | | | |
+| Node + npm globals | LM | **manual** (nvm) / `Brewfile` + `tools.txt` | | | vtsls, typescript, marp-cli, emacs-lsp-proxy, 9router |
+| Docker (+ nvidia-container-toolkit on Linux) | LM | **manual** (vendor repo) / `Brewfile` (docker-desktop) | | | |
 | CUDA toolkit 13, NVIDIA driver 595 | L | **manual** (vendor repo) | | | |
 | Google Cloud CLI | L | **manual** (vendor repo) | | | |
 | ESP-IDF | L | **manual** | | | `~/System/esp`; minicom (`apt.txt`) for serial |
@@ -98,36 +105,37 @@ the file named in "Installed by".
 |---|---|---|---|---|---|
 | zathura + djvu/cb/ps plugins | L | `apt.txt`, step `defaults` | `dotfiles/zathura/` | ✓ | default document viewer |
 | zathura-pdf-mupdf | L | `builds/zathura-mupdf.sh` | | | EPUB/MOBI |
-| Zotero | L | `opt.txt` | | | `/opt/zotero` |
-| hledger | L | **manual** | `dotfiles/hledger/` | | |
+| Skim | M | `Brewfile`, step `defaults` | | | default PDF viewer (sioyek: the Homebrew cask is disabled, fails Gatekeeper) |
+| Zotero | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/zotero` |
+| hledger | LM | **manual** / `Brewfile` | `dotfiles/hledger/` | | |
 
 ## Media
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| mpv, vlc | L | `apt.txt` | | | |
+| mpv, vlc | LM | `apt.txt` / `Brewfile` | | | |
 | mix-mpd | L | `builds/mix-mpd.sh` | `desktop/linux/systemd/mix-mpd.service` | | `github.com:AnissL93/mix-mpd` (private; based on net-mpd, extended to mpv and other sources) in `~/System/mix-mpd` → `~/go/bin/mix-mpd` |
 | rmpc | L | `tools.txt` (cargo) | `~/.config/rmpc` (not in git) | ✓ | client for mix-mpd |
 | feh | L | `apt.txt` | | | image viewer and wallpaper setter |
-| ffmpeg, Blender | L | `apt.txt` | | | |
-| LosslessCut | L | `opt.txt` | | | `/opt/losslesscut` |
-| yt-dlp | L | `tools.txt` (uv) | | | used by mix-mpd |
+| ffmpeg, Blender | LM | `apt.txt` / `Brewfile` | | | |
+| LosslessCut | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/losslesscut` |
+| yt-dlp | LM | `tools.txt` (uv) | | | used by mix-mpd |
 
 ## Internet, sync, remote
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| Firefox | L | `opt.txt` | `dotfiles/firefox/` | ✓ | `/opt/firefox`; apt `firefox` (snap stub) also installed |
-| Chromium | L | **manual** (snap) | | | |
-| Syncthing | L | **manual** (vendor repo) | | | |
-| Tailscale | L | **manual** (vendor repo) | | | |
-| rclone, openlist | L | **manual** | | | `~/.local/bin` |
+| Firefox | LM | `opt.txt` / `Brewfile` | `dotfiles/firefox/` | ✓ | Linux: `/opt/firefox`; apt `firefox` (snap stub) also installed |
+| Chromium / Google Chrome | LM | **manual** (snap) / `Brewfile` (google-chrome) | | | |
+| Syncthing | LM | **manual** (vendor repo) / `Brewfile` | | | |
+| Tailscale | LM | **manual** (vendor repo) / `Brewfile` | | | |
+| rclone, openlist | LM | **manual** / `Brewfile` (rclone) | | | `~/.local/bin`; openlist Linux only |
 | frpc | L | `opt.txt` | | | `/opt/frpc` |
-| Bitwarden CLI (`bw`) | L | **manual** | | | `~/.local/bin` |
-| qBittorrent | L | `apt.txt` | | | |
+| Bitwarden CLI (`bw`) | LM | **manual** / `Brewfile` | | | Linux: `~/.local/bin`; macOS also the Bitwarden app |
+| qBittorrent | LM | `apt.txt` / **manual** (macOS: the Homebrew cask is disabled, fails Gatekeeper) | | | |
 | Baidu Netdisk | L | **manual** (deb) | | | |
-| LocalSend | L | **manual** (snap) | | | |
-| WeChat | L | `opt.txt` | | | `/opt/wechat` (AppImage) |
+| LocalSend | LM | **manual** (snap) / `Brewfile` | | | |
+| WeChat | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/wechat` (AppImage) |
 | sshfs, x11vnc | L | `apt.txt` | | | |
 
 ## Other
