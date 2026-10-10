@@ -104,9 +104,8 @@ the file named in "Installed by".
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| zathura + djvu/cb/ps plugins | L | `apt.txt`, step `defaults` | `dotfiles/zathura/` | ✓ | default document viewer |
-| zathura-pdf-mupdf | L | `builds/zathura-mupdf.sh` | | | EPUB/MOBI |
-| Skim | M | `Brewfile`, step `defaults` | | | default PDF viewer (sioyek: the Homebrew cask is disabled, fails Gatekeeper) |
+| zathura + djvu/cb/ps plugins | LM | `apt.txt` / `Brewfile`, step `defaults` | `dotfiles/zathura/` | ✓ | default document viewer; macOS: `~/Applications/Zathura.app` (step `builds`) passes Finder's files to it. No AZW3 (MuPDF cannot read it) |
+| zathura-pdf-mupdf | LM | `builds/zathura-mupdf.sh` / `Brewfile` | | | EPUB/MOBI |
 | Zotero | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/zotero` |
 | hledger | LM | **manual** / `Brewfile` | `dotfiles/hledger/` | | |
 

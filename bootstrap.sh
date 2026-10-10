@@ -16,7 +16,8 @@
 #   packages   L M  apt.txt / Brewfile
 #   suckless   L    build + install dwm, dmenu, dwmblocks, st, slock (and libxft-bgra if libXft is old)
 #   builds     L M  builds/emacs.sh, builds/zathura-mupdf.sh, builds/mix-mpd.sh (Linux);
-#                   dmenu from desktop/mac/dmenu/dmenu.swift into ~/.local/bin, builds/codeisland.sh (macOS)
+#                   dmenu from desktop/mac/dmenu/dmenu.swift into ~/.local/bin, Zathura.app,
+#                   builds/codeisland.sh (macOS)
 #   tools      L M  packages/tools.txt
 #   opt        L    packages/opt.txt
 #   fonts      L M  the fonts of the assets repo (github.com/AnissL93/assets, fonts/)
@@ -25,7 +26,7 @@
 #   emacs      L M  Doom Emacs
 #   session    L    dwm entry for display managers (/usr/share/xsessions)
 #   keyboard   L    keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
-#   defaults   L M  zathura (Linux) / Skim (macOS) as the default document viewer
+#   defaults   L M  zathura as the default document viewer
 #   services   M    start skhd, borders and sketchybar
 #   theme      L M  generate all colours, cursors, wallpaper (amber, or the current theme)
 #
@@ -108,6 +109,14 @@ step_builds() {
         say "build: dmenu (desktop/mac/dmenu/dmenu.swift)"
         x mkdir -p "$HOME/.local/bin"
         x swiftc -O "$ROOT/desktop/mac/dmenu/dmenu.swift" -o "$HOME/.local/bin/dmenu"
+        say "build: Zathura.app (desktop/mac/zathura/Zathura.applescript)"
+        local app="$HOME/Applications/Zathura.app" pl="$HOME/Applications/Zathura.app/Contents/Info.plist"
+        x osacompile -o "$app" "$ROOT/desktop/mac/zathura/Zathura.applescript"
+        x plutil -replace CFBundleIdentifier -string org.pwmt.zathura.app "$pl"
+        x plutil -replace CFBundleDocumentTypes -json \
+            '[{"CFBundleTypeRole":"Viewer","CFBundleTypeName":"Documents","LSItemContentTypes":["com.adobe.pdf","org.idpf.epub-container","com.amazon.mobi"]}]' "$pl"
+        x codesign -f -s - "$app"                     # editing Info.plist breaks osacompile's signature
+        x /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$app"
         say "build: CodeIsland, pixel patch (builds/codeisland.sh)"
         x bash "$ROOT/builds/codeisland.sh"
         return
@@ -239,8 +248,12 @@ step_keyboard() {
 
 step_defaults() {
     if [ "$OS" = M ]; then
-        say "default apps: Skim for PDF"
-        x duti -s net.sourceforge.skim-app.skim .pdf all
+        say "default apps: zathura for PDF, EPUB, MOBI"
+        # Homebrew's zathura looks for plugins in its own lib/zathura only
+        x mkdir -p "$(brew --prefix zathura)/lib/zathura"
+        x ln -sf "$(brew --prefix zathura-pdf-mupdf)/libpdf-mupdf.dylib" "$(brew --prefix zathura)/lib/zathura/"
+        local u                                       # by UTI: duti with ".mobi" silently keeps the old app
+        for u in com.adobe.pdf org.idpf.epub-container com.amazon.mobi; do x duti -s org.pwmt.zathura.app "$u" all; done
         return
     fi
     say "default apps: zathura for documents (images stay with feh)"

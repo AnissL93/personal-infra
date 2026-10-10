@@ -46,7 +46,7 @@ L   dotfiles/alacritty/linux.toml             ~/.config/alacritty/alacritty.toml
 M   dotfiles/alacritty/alacritty.toml         ~/.config/alacritty/alacritty.toml
 LM  dotfiles/doom                             ~/.config/doom
 LM  dotfiles/nvim-config                      ~/.config/nvim
-L   dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
+LM  dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
 L   dotfiles/vscode/settings.json             ~/.config/Code/User/settings.json
 LM  dotfiles/themes/theme                     ~/.local/bin/theme
 LM  dotfiles/claude/skills/theme-from-picture ~/.claude/skills/theme-from-picture

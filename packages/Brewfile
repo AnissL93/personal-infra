@@ -4,6 +4,7 @@ tap "nikitabobko/tap"         # AeroSpace
 tap "koekeishiya/formulae"    # skhd
 tap "FelixKratz/formulae"     # JankyBorders
 tap "d12frosted/emacs-plus"   # Emacs
+tap "homebrew-zathura/zathura" # zathura
 
 # desktop: tiling WM, hotkeys, window borders, Rime input method
 cask "nikitabobko/tap/aerospace"
@@ -45,7 +46,8 @@ brew "node"
 brew "rust"
 
 # documents and media
-cask "skim"                   # zathura (sioyek: Homebrew disabled it, fails Gatekeeper)
+brew "zathura"                # document viewer, as on Linux (Zathura.app: step builds)
+brew "zathura-pdf-mupdf"      # PDF, EPUB, MOBI
 cask "zotero"
 cask "obsidian"
 brew "hledger"
