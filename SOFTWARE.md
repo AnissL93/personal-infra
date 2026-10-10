@@ -96,6 +96,7 @@ the file named in "Installed by".
 |---|---|---|---|---|---|
 | Claude Code | LM | **manual** | `dotfiles/claude/` | ✓ | `~/.claude` mostly not in git |
 | Codex | L | **manual** | | | `~/.codex` |
+| CodeIsland | M | `builds/codeisland.sh` | | ✓ | Claude Code / Codex / Gemini CLI status around the notch; upstream release + pixel patch (`builds/codeisland-pixel.py`: Cubic 11, theme bar colours, no self-update) in `~/System/CodeIsland` |
 | llama.cpp | L | **manual** (source) | | | `~/System/llama.cpp` (15 GB) |
 | research-idea-explorer (`rie`), tapp-cli | L | **manual** | | | `~/.local/bin` |
 
