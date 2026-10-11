@@ -35,7 +35,7 @@ the file named in "Installed by".
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
 | AeroSpace | M | `Brewfile` | `desktop/mac/aerospace/` | | tiling WM |
-| skhd | M | `Brewfile`, step `services` | `desktop/mac/skhd/` | | hotkeys |
+| skhd | M | `Brewfile`, step `services` | `desktop/mac/skhd/` | | only `cmd-left/right` (AeroSpace cannot see arrow keys); every other key is in AeroSpace |
 | JankyBorders | M | `Brewfile`, step `services` | `desktop/mac/borders/` | ✓ | |
 | Squirrel + librime | M | `Brewfile` | `rime/` (`~/Library/Rime`) | | librime for emacs-rime |
 | SketchyBar | M | `Brewfile`, step `services` | `desktop/mac/sketchybar/` | ✓ | status bar like dwm + dwmblocks |
@@ -50,7 +50,7 @@ the file named in "Installed by".
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| alacritty | LM | `apt.txt` / `Brewfile` | `dotfiles/alacritty/` | ✓ | `linux.toml` / `alacritty.toml` |
+| alacritty | LM | `apt.txt` / `Brewfile` | `dotfiles/alacritty/` | ✓ | shared `alacritty.toml` + `linux.toml` / `macos.toml` (linked as `platform.toml`) |
 | kitty | M | `Brewfile` | `dotfiles/kitty/` | ✓ | macOS terminal (`cmd-enter` → `desktop/mac/bin/term`: a window in the running kitty, 0.2 s vs ~1.3 s for a new process), st's keys: `alt-l` open link, `alt-y` copy link, `alt-o` copy last output |
 | swallow | M | step `links` | `desktop/mac/bin/swallow`, `desktop/mac/zsh/swallow.zsh` | | dwm's swallow on AeroSpace: an app run from a terminal hides it until the app exits; `~/.zshrc` sources the hook |
 | bash + oh-my-bash | L | step `shell` | `dotfiles/bash/` | ✓ | prompt colours |
@@ -72,7 +72,7 @@ the file named in "Installed by".
 | Emacs | LM | `builds/emacs.sh` / `Brewfile` (emacs-plus@31) | | | Linux: 30.2 in `/usr/local`, Lucid, native-comp; macOS: 31 |
 | Doom Emacs | LM | step `emacs` | `dotfiles/doom/` | ✓ | |
 | Neovim | LM | `apt.txt` / `Brewfile` | `dotfiles/nvim-config/` | ✓ | |
-| VS Code | LM | **manual** (vendor repo) / `Brewfile` | `dotfiles/vscode/` | ✓ | macOS: `settings-mac.json` (Retina sizes, no UI zoom), linked by step `links` (path has spaces) |
+| VS Code | LM | **manual** (vendor repo) / `Brewfile` | `dotfiles/vscode/` | ✓ | macOS: `settings-mac.json` (UI zoom 1.5x as on Linux, 24 pt on screen), linked by step `links` (path has spaces) |
 | PyCharm, RustRover | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/pycharm`, `/opt/rustrover` |
 | Obsidian | LM | **manual** (deb) / `Brewfile` | `dotfiles/obsidian/` | ✓ | themed vault: Linux `/srv/sync/WorkNotes`, macOS `~/Sync/WorkNotes`; + `obsidian-cli` in `~/.local/bin` (Linux) |
 
