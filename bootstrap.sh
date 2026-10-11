@@ -22,7 +22,8 @@
 #   opt        L    packages/opt.txt
 #   fonts      L M  the fonts of the assets repo (github.com/AnissL93/assets, fonts/)
 #   links      L M  links.txt (+ Firefox profile files)
-#   shell      L    oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc
+#   shell      L M  oh-my-bash, and load dotfiles/bash/desktop.sh from ~/.bashrc (Linux);
+#                   load the swallow hook (desktop/mac/zsh/swallow.zsh) from ~/.zshrc (macOS)
 #   emacs      L M  Doom Emacs
 #   session    L    dwm entry for display managers (/usr/share/xsessions)
 #   keyboard   L    keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
@@ -211,6 +212,13 @@ step_links() {
 
 step_shell() {
     say "shell"
+    if [ "$OS" = M ]; then                          # ~/.zshrc itself stays out of git (it holds keys)
+        if ! grep -qs 'desktop/mac/zsh/swallow.zsh' "$HOME/.zshrc"; then
+            printf '  + append "source .../desktop/mac/zsh/swallow.zsh" to ~/.zshrc\n'
+            [ -n "$DRY" ] || printf '\n# dwm-like swallow (AeroSpace)\nsource %s/desktop/mac/zsh/swallow.zsh\n' "$ROOT" >> "$HOME/.zshrc"
+        fi
+        return
+    fi
     if [ ! -d "$HOME/.oh-my-bash" ]; then
         x sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh | bash -s -- --unattended'
     fi
@@ -317,7 +325,7 @@ EOF
 if [ "$OS" = L ]; then
     ALL=(packages suckless builds tools opt fonts links shell emacs session keyboard defaults theme)
 else
-    ALL=(packages tools builds fonts links emacs defaults services theme)
+    ALL=(packages tools builds fonts links shell emacs defaults services theme)
 fi
 steps=()
 for a in "$@"; do
