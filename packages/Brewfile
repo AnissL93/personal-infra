@@ -22,6 +22,7 @@ brew "duti"                   # default apps (bootstrap step defaults)
 
 # terminal and shell
 cask "alacritty"
+cask "kitty"                  # terminal (st on Linux): URL hints, copy output
 brew "fzf"
 brew "ripgrep"
 brew "htop"

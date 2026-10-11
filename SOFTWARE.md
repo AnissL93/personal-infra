@@ -51,6 +51,8 @@ the file named in "Installed by".
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
 | alacritty | LM | `apt.txt` / `Brewfile` | `dotfiles/alacritty/` | ✓ | `linux.toml` / `alacritty.toml` |
+| kitty | M | `Brewfile` | `dotfiles/kitty/` | ✓ | macOS terminal (`cmd-enter` → `desktop/mac/bin/term`: a window in the running kitty, 0.2 s vs ~1.3 s for a new process), st's keys: `alt-l` open link, `alt-y` copy link, `alt-o` copy last output |
+| swallow | M | step `links` | `desktop/mac/bin/swallow`, `desktop/mac/zsh/swallow.zsh` | | dwm's swallow on AeroSpace: an app run from a terminal hides it until the app exits; `~/.zshrc` sources the hook |
 | bash + oh-my-bash | L | step `shell` | `dotfiles/bash/` | ✓ | prompt colours |
 | zsh | LM | `apt.txt` | | | macOS default shell; Mac shell config not in git |
 | tmux | LM | `apt.txt` / `Brewfile` | | | no config |
