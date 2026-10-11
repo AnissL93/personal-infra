@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Guide</title>
+<meta name="description" content="Set up a new Linux or macOS machine from personal-infra with one command.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section id="new">
+    <h2 data-tag="1">New machine</h2>
+    <p class="lede">The same command sets up Linux (Debian/Ubuntu, dwm on X11) or macOS. It detects the OS and runs only that platform's steps. Every step can be run on its own and run again safely.</p>
+    <div class="boot">
+      <div class="win"><div class="tb"><span>st</span><span>clone + run</span></div><pre class="term"><span class="p">$</span> git clone --recursive git@github.com:AnissL93/personal-infra.git ~/System/personal-infra
+<span class="p">$</span> cd ~/System/personal-infra
+<span class="p">$</span> ./bootstrap.sh --dry-run   <span class="c"># see what it would do</span>
+<span class="p">$</span> ./bootstrap.sh             <span class="c"># everything</span>
+<span class="p">$</span> ./bootstrap.sh links theme <span class="c"># or single steps</span></pre></div>
+      <div class="win"><div class="tb"><span>st</span><span>submodules</span></div><pre class="term"><span class="c"># after a plain clone (without --recursive)</span>
+<span class="p">$</span> git submodule update --init --recursive
+<span class="c"># change a module: push it first, then record it here</span>
+<span class="p">$</span> git -C dotfiles push
+<span class="p">$</span> git add dotfiles &amp;&amp; git commit -m "chore: bump dotfiles"</pre></div>
+    </div>
+  </section>
+
+  <section id="steps">
+    <h2 data-tag="2">Steps <small>./bootstrap.sh --help</small></h2>
+    <p class="lede">Run in this order. <b class="mark both">L</b> Linux, <b class="mark both">M</b> macOS.</p>
+    <table class="apps steps">
+      <thead><tr><th>step</th><th>os</th><th>what it does</th></tr></thead>
+      <tbody>
+        <tr><td>packages</td><td data-k="os">L M</td><td data-k="does"><code>packages/apt.txt</code> on Linux, <code>packages/Brewfile</code> on macOS</td></tr>
+        <tr><td>suckless</td><td data-k="os">L</td><td data-k="does">builds and installs dwm, dmenu, dwmblocks, st and slock (and libxft-bgra if libXft is old)</td></tr>
+        <tr><td>builds</td><td data-k="os">L M</td><td data-k="does">Linux: Emacs, zathura-pdf-mupdf, mix-mpd from <code>builds/</code>. macOS: the Swift dmenu into <code>~/.local/bin</code>, <code>Zathura.app</code>, CodeIsland</td></tr>
+        <tr><td>tools</td><td data-k="os">L M</td><td data-k="does"><code>packages/tools.txt</code>: uv, cargo, go, npm and pip tools</td></tr>
+        <tr><td>opt</td><td data-k="os">L</td><td data-k="does"><code>packages/opt.txt</code>: downloaded apps, into <code>/opt</code></td></tr>
+        <tr><td>fonts</td><td data-k="os">L M</td><td data-k="does">the fonts of the <a href="https://github.com/AnissL93/assets/tree/main/fonts">assets repo</a></td></tr>
+        <tr><td>links</td><td data-k="os">L M</td><td data-k="does">every config symlink in <code>links.txt</code> for this OS, plus the Firefox profile files</td></tr>
+        <tr><td>shell</td><td data-k="os">L M</td><td data-k="does">Linux: oh-my-bash and <code>dotfiles/bash/desktop.sh</code> from <code>~/.bashrc</code>. macOS: the swallow hook in <code>~/.zshrc</code></td></tr>
+        <tr><td>emacs</td><td data-k="os">L M</td><td data-k="does">Doom Emacs</td></tr>
+        <tr><td>session</td><td data-k="os">L</td><td data-k="does">a dwm entry for display managers (<code>/usr/share/xsessions</code>)</td></tr>
+        <tr><td>keyboard</td><td data-k="os">L</td><td data-k="does">keyd remap: <code>/etc/keyd/default.conf</code> links to <code>keymap/linux/keyd.conf</code></td></tr>
+        <tr><td>defaults</td><td data-k="os">L M</td><td data-k="does">zathura as the default document viewer</td></tr>
+        <tr><td>services</td><td data-k="os">M</td><td data-k="does">starts skhd, borders and SketchyBar</td></tr>
+        <tr><td>theme</td><td data-k="os">L M</td><td data-k="does">generates all colours, cursors and the wallpaper (amber, or the current theme)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="lists">
+    <h2 data-tag="3">What gets installed</h2>
+    <p class="lede">The script holds no package names. Everything it installs is listed in plain files, so adding software means adding one line there and one row to <a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md">SOFTWARE.md</a>. The <a href="apps.html">apps page</a> shows the result.</p>
+    <div class="scripts">
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/blob/main/packages/apt.txt">packages/apt.txt</a><span>Linux system packages</span></div>
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/blob/main/packages/Brewfile">packages/Brewfile</a><span>macOS formulae and casks</span></div>
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/blob/main/packages/tools.txt">packages/tools.txt</a><span>uv, cargo, go, npm and pip tools, with a platform column</span></div>
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/blob/main/packages/opt.txt">packages/opt.txt</a><span>Linux apps downloaded into <code>/opt</code></span></div>
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/tree/main/builds">builds/</a><span>things built from source</span></div>
+      <div class="srow"><a href="https://github.com/AnissL93/personal-infra/blob/main/links.txt">links.txt</a><span>config symlinks into <code>$HOME</code>, with a platform column</span></div>
+    </div>
+  </section>
+
+  <section id="manual">
+    <h2 data-tag="4">By hand, once</h2>
+    <div class="plats">
+      <div class="plat"><h3>Linux</h3><p>Credentials, vendor apt repositories (VS Code, Docker, Tailscale, Syncthing, CUDA) and Firefox's first start. <code>bootstrap.sh</code> lists them when it finishes. Apps marked <b>manual</b> on the <a href="linux.html">Linux page</a> are not installed by it.</p></div>
+      <div class="plat"><h3>macOS</h3><p>Apps installed by hand first need <code>HOMEBREW_CASK_OPTS=--adopt brew bundle --file packages/Brewfile</code>. Casks that ask for a password (Squirrel, Karabiner, Docker, Tailscale, Bitwarden) must be installed from a terminal. Then enable the "keymap" rules in Karabiner and allow SketchyBar, AeroSpace and skhd under Accessibility. More on the <a href="macos.html">macOS page</a>.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>paint(startTheme());</script>
+</body>
+</html>

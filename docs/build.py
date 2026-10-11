@@ -79,7 +79,32 @@ def md(cell):
     """Inline markdown of a table cell -> HTML: `code` and [text](url)."""
     cell = html.escape(cell, quote=False)
     cell = re.sub(r"`([^`]+)`", r"<code>\1</code>", cell)
+    cell = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", cell)
     return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', cell)
+
+
+def apps():
+    """SOFTWARE.md tables -> {"linux"|"macos"|"all": [[section, rows]]}. An `LM` row whose
+    "Installed by" is "linux way / mac way" shows only its own half on the per-OS lists."""
+    out, section = {"linux": [], "macos": [], "all": []}, None
+    for line in open(os.path.join(ROOT, "SOFTWARE.md")):
+        if line.startswith("## "):
+            section = line[3:].strip()
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 6 or cells[1] not in ("L", "M", "LM"):
+            continue
+        app, pf, inst, conf, themed, notes = cells
+        halves = inst.split(" / ") if pf == "LM" and inst.count(" / ") == 1 else [inst, inst]
+        for os_, flag, how in (("linux", "L", halves[0]), ("macos", "M", halves[-1]), ("all", "", inst)):
+            if flag not in pf:
+                continue
+            name = section if os_ == "all" or not section.startswith("Desktop") else "Desktop"
+            if not out[os_] or out[os_][-1][0] != name:
+                out[os_].append([name, []])
+            out[os_][-1][1].append({"app": md(app), "pf": pf, "how": md(how), "config": md(conf),
+                                    "themed": bool(themed), "notes": md(notes)})
+    return out
 
 
 def fonts():
@@ -101,9 +126,10 @@ if __name__ == "__main__":
     os.makedirs(os.path.join(DOCS, "fonts"), exist_ok=True)
     os.makedirs(os.path.join(DOCS, "thumbs"), exist_ok=True)
     shutil.copy(os.path.join(ROOT, "keymap", "keymap.svg"), os.path.join(DOCS, "keymap.svg"))
-    data = {"themes": themes(), "fonts": fonts(), "scripts": {
+    data = {"themes": themes(), "fonts": fonts(), "apps": apps(), "scripts": {
         "desktop/linux/scripts": scripts("desktop/linux/scripts", "desktop", "linux/scripts"),
         "desktop/linux/bin": scripts("desktop/linux/bin", "desktop", "linux/bin"),
+        "desktop/mac/bin": scripts("desktop/mac/bin", "desktop", "mac/bin"),
         "builds": scripts("builds", "personal-infra", "builds"),
     }}
     with open(os.path.join(DOCS, "data.js"), "w") as f:

@@ -4,203 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>personal-infra</title>
-<meta name="description" content="A whole Linux + macOS desktop in one repo: dwm, st, 200 colour themes, scripts and bootstrap.">
+<meta name="description" content="A whole Linux + macOS desktop in one repo: dwm and AeroSpace, st and kitty, 200 colour themes, scripts and bootstrap.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-/* Every colour on this page is a theme key from dotfiles/themes/*.conf; picking a theme rewrites them. */
-:root {
-  --bg: #2e181a; --bg_alt: #251214; --bg_hl: #392123; --sel: #4e2d34; --dim: #62484a; --mid: #b79496;
-  --fg: #ecd9d9; --bright: #fbeeef; --accent: #f0a6b6; --accent_fg: #201417; --bar: #ff95b2; --bar_fg: #201417;
-  --border: #f68c36; --comment: #8e7274; --string: #b0c888; --number: #e9b082; --keyword: #f1a6b0;
-  --function: #91c3f6; --type: #dfa9da; --punct: #b79496; --err: #da827f; --warn: #e9b082; --ok: #8fceac;
-  --wall: none;
-  --px: "Silkscreen", monospace;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 3rem; }
-body {
-  margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--mono); overflow-x: clip;
-  transition: background-color .35s, color .35s;
-}
-::selection { background: var(--sel); color: var(--bright); }
-a { color: var(--function); text-decoration-thickness: 1px; text-underline-offset: 3px; }
-code, kbd { font-family: var(--mono); background: var(--bg_hl); padding: .1em .35em; color: var(--string); }
-:focus-visible { outline: 2px solid var(--border); outline-offset: 2px; }
-
-/* dwm bar */
-.bar {
-  position: sticky; top: 0; z-index: 20; display: flex; align-items: stretch; height: 2.4rem;
-  background: var(--bg_alt); border-bottom: 1px solid var(--bg_hl); font-family: var(--px); font-size: 13px;
-  transition: background-color .35s;
-}
-.tags { display: flex; overflow-x: auto; scrollbar-width: none; }
-.tags a {
-  display: flex; align-items: center; gap: .45em; padding: 0 .9em; color: var(--mid); text-decoration: none; white-space: nowrap;
-}
-.tags a b { color: var(--dim); font-weight: 400; }
-.tags a:hover, .tags a.on { background: var(--bar); color: var(--bar_fg); }
-.tags a:hover b, .tags a.on b { color: var(--bar_fg); }
-.bar .title {
-  flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0 1em;
-  background: var(--bar); color: var(--bar_fg); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-.bar .status { display: flex; align-items: center; gap: .9em; padding: 0 1em; color: var(--mid); white-space: nowrap; }
-.bar .status i { font-style: normal; color: var(--dim); }
-@media (max-width: 760px) { .bar .status { display: none; } .bar .title { justify-content: flex-end; } }
-
-main { max-width: 1240px; margin: 0 auto; padding: 0 16px 6rem; }
-section { padding-top: 4.5rem; }
-h1, h2, h3 { font-family: var(--px); font-weight: 400; line-height: 1.15; margin: 0; color: var(--bright); }
-h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); display: flex; align-items: baseline; gap: .6em; flex-wrap: wrap; }
-h2 small { font: 13px var(--mono); color: var(--dim); }
-h2::before { content: attr(data-tag); font-size: .5em; color: var(--accent_fg); background: var(--accent); padding: .15em .5em; align-self: center; }
-.lede { max-width: 68ch; color: var(--mid); margin: .9rem 0 1.6rem; }
-
-/* hero: the current wallpaper with a st window on top */
-.hero {
-  position: relative; margin: 0 calc(50% - 50vw); min-height: min(78vh, 720px); display: grid; align-items: end;
-  padding: 3rem 16px; overflow: hidden; isolation: isolate;
-}
-.hero::before {
-  content: ""; position: absolute; inset: 0; z-index: -2; background: var(--wall) center / cover no-repeat;
-  image-rendering: auto; transition: opacity .4s;
-}
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, transparent 20%, var(--bg) 98%); }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 2rem; align-items: end; }
-@media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
-.hero h1 {
-  font-size: clamp(2.6rem, 8.5vw, 6.4rem); letter-spacing: -.02em; color: var(--bright);
-  text-shadow: 3px 3px 0 var(--bg), 6px 6px 0 var(--accent);
-}
-.hero p { font-size: 1.05rem; max-width: 46ch; color: var(--fg); background: color-mix(in srgb, var(--bg) 82%, transparent); padding: .6rem .8rem; margin: 1.2rem 0 0; }
-.win { background: var(--bg); border: 2px solid var(--border); box-shadow: 8px 8px 0 color-mix(in srgb, var(--bg) 60%, transparent); }
-.win .tb { display: flex; justify-content: space-between; padding: .25rem .7rem; background: var(--bg_alt); color: var(--dim); font: 12px var(--px); }
-.term { margin: 0; padding: .9rem 1rem 1.1rem; font: 13.5px/1.55 var(--mono); white-space: pre-wrap; word-break: break-word; color: var(--fg); }
-.term .p { color: var(--color2, var(--ok)); } .term .c { color: var(--comment); }
-.blocks { display: grid; grid-template-columns: repeat(8, 1fr); margin-top: .6rem; max-width: 22rem; }
-.blocks span { height: 1.1rem; }
-
-/* gallery */
-.filters { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: 1.4rem; }
-.filters button, .chip {
-  font: 13px var(--px); background: var(--bg_alt); color: var(--mid); border: 1px solid var(--bg_hl); padding: .45em .9em; cursor: pointer;
-}
-.filters button[aria-pressed="true"] { background: var(--accent); color: var(--accent_fg); border-color: var(--accent); }
-.filters input {
-  flex: 1 1 12rem; min-width: 0; font: 14px var(--mono); background: var(--bg_alt); color: var(--fg);
-  border: 1px solid var(--bg_hl); padding: .5em .8em;
-}
-.filters input::placeholder { color: var(--dim); }
-.count { color: var(--dim); font-size: 13px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.1rem; }
-.card {
-  --c-bg: #000; all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column;
-  background: var(--c-bg); color: var(--c-fg); border: 2px solid var(--c-bg_hl); transition: transform .18s, border-color .18s, box-shadow .18s;
-  animation: rise .5s both; animation-delay: calc(var(--i, 0) * 18ms);
-}
-.card:hover, .card:focus-visible { transform: translate(-3px, -3px); border-color: var(--c-border); box-shadow: 6px 6px 0 var(--c-accent); outline: none; }
-.card .img { aspect-ratio: 16 / 9; background: var(--c-bg_alt) center / cover; position: relative; }
-.card .img.pixel { image-rendering: pixelated; }
-.card .cbar { display: flex; font: 11px var(--px); background: var(--c-bg_alt); }
-.card .cbar span { padding: .2em .6em; color: var(--c-mid); }
-.card .cbar span:first-child { background: var(--c-bar); color: var(--c-bar_fg); }
-.card .cbar em { flex: 1; font-style: normal; background: var(--c-bar); color: var(--c-bar_fg); padding: .2em .6em; text-align: right; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.card .body { padding: .7rem .8rem .8rem; display: grid; gap: .45rem; }
-.card .name { font: 15px var(--px); color: var(--c-bright); display: flex; justify-content: space-between; gap: .5rem; }
-.card .name small { font: 11px var(--mono); color: var(--c-dim); align-self: center; }
-.card code { background: var(--c-bg_hl); color: var(--c-string); font-size: 12px; justify-self: start; }
-.swatch16 { display: grid; grid-template-columns: repeat(16, 1fr); height: .7rem; }
-@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
-@media (prefers-reduced-motion: reduce) { .card { animation: none; } * { transition: none !important; } html { scroll-behavior: auto; } }
-
-/* theme detail */
-dialog {
-  width: min(980px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; border: 2px solid var(--border);
-  background: var(--bg); color: var(--fg); box-shadow: 10px 10px 0 var(--accent);
-}
-dialog::backdrop { background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(3px); }
-.d-img { aspect-ratio: 16 / 9; background: var(--bg_alt) center / cover; position: relative; }
-.d-img.pixel { image-rendering: pixelated; }
-.d-img .links { position: absolute; right: .6rem; bottom: .6rem; display: flex; gap: .4rem; flex-wrap: wrap; justify-content: flex-end; }
-.d-img .links a, .d-close { font: 12px var(--px); background: var(--bg); color: var(--fg); padding: .35em .7em; text-decoration: none; border: 1px solid var(--bg_hl); }
-.d-close { position: absolute; right: .6rem; top: .6rem; cursor: pointer; }
-.d-body { padding: 1.2rem 1.3rem 1.5rem; display: grid; gap: 1.2rem; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-@media (max-width: 760px) { .d-body { grid-template-columns: 1fr; } }
-.d-body h3 { font-size: 1.7rem; }
-.d-body h4 { margin: 0 0 .4rem; font: 12px var(--px); color: var(--dim); }
-.pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .3rem; }
-.pal button {
-  all: unset; cursor: pointer; display: grid; grid-template-rows: 1.6rem auto auto; font: 11px var(--mono); color: var(--mid);
-  border: 1px solid var(--bg_hl);
-}
-.pal button i { display: block; }
-.pal button span { padding: .1rem .35rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pal button:hover, .pal button:focus-visible { border-color: var(--border); color: var(--fg); }
-.code { background: var(--bg_alt); padding: .8rem 1rem; margin: 0; font: 13px/1.6 var(--mono); overflow-x: auto; border-left: 3px solid var(--accent); }
-.k { color: var(--keyword); } .f { color: var(--function); } .s { color: var(--string); } .n { color: var(--number); }
-.t { color: var(--type); } .cm { color: var(--comment); font-style: italic; } .pu { color: var(--punct); }
-.copy { cursor: pointer; }
-.toast { position: fixed; left: 50%; bottom: 1.2rem; transform: translateX(-50%); background: var(--accent); color: var(--accent_fg); font: 13px var(--px); padding: .5em 1em; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 50; }
-.toast.on { opacity: 1; }
-
-/* modules */
-.mods { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.1rem; }
-@media (max-width: 400px) { .mods { grid-template-columns: 1fr; } }
-.mod { background: var(--bg_alt); border-top: 3px solid var(--c, var(--accent)); padding: 1.1rem 1.2rem 1.2rem; display: grid; gap: .6rem; align-content: start; }
-.mod h3 { font-size: 1.15rem; display: flex; justify-content: space-between; gap: .5rem; align-items: baseline; }
-.mod h3 a { font: 12px var(--mono); }
-.mod p { margin: 0; color: var(--mid); }
-.mod ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .3rem; }
-.mod li { font-size: 12px; background: var(--bg_hl); color: var(--fg); padding: .1em .5em; }
-
-/* scripts */
-.scripts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 0 2rem; }
-.sgroup h3 { font-size: 1rem; color: var(--accent); margin: 1.4rem 0 .4rem; }
-.srow { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; padding: .35rem 0; border-bottom: 1px dashed var(--bg_hl); font-size: 13.5px; }
-.srow a { color: var(--function); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
-.srow a:hover { text-decoration: underline; }
-.srow span { color: var(--mid); }
-.srow span:empty::before { content: "—"; color: var(--dim); }
-
-.fonts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 1.4rem 1.1rem; }
-.font { margin: 0; background: var(--bg_alt); border: 1px solid var(--bg_hl); }
-.font img { display: block; width: 100%; height: auto; }
-.font figcaption { padding: .7rem .9rem .8rem; display: grid; gap: .25rem; font-size: 13px; color: var(--mid); }
-.font figcaption b { font: 15px var(--px); font-weight: 400; color: var(--bright); display: flex; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
-.font figcaption b a { font: 12px var(--mono); }
-.font dl { margin: 0; display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: .15rem .6rem; }
-.font dt { color: var(--dim); } .font dd { margin: 0; overflow-wrap: anywhere; }
-.keymap { background: #f4f1ea; padding: 1rem; border: 2px solid var(--bg_hl); overflow-x: auto; }
-.keymap img { display: block; width: 100%; min-width: 640px; height: auto; }
-.boot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 1.1rem; }
-footer { margin-top: 5rem; padding-top: 1.2rem; border-top: 1px solid var(--bg_hl); color: var(--dim); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<nav class="bar" aria-label="Sections">
-  <div class="tags">
-    <a href="#top"><b>1</b>home</a>
-    <a href="#themes"><b>2</b>themes</a>
-    <a href="#modules"><b>3</b>modules</a>
-    <a href="#scripts"><b>4</b>scripts</a>
-    <a href="#fonts"><b>5</b>fonts</a>
-    <a href="#keymap"><b>6</b>keymap</a>
-    <a href="#bootstrap"><b>7</b>bootstrap</a>
-  </div>
-  <div class="title" id="bar-title">personal-infra</div>
-  <div class="status"><span id="st-count"></span><i>│</i><span id="st-mode"></span><i>│</i><span id="st-clock"></span></div>
-</nav>
-
 <main>
   <header class="hero" id="top">
     <div class="hero-grid">
       <div>
         <h1>personal-<br>infra</h1>
-        <p>My whole computer in one repo. Linux on dwm, macOS on AeroSpace, and one <code>theme</code> command that recolours every app from a single palette file.</p>
+        <p>My whole computer in one repo. Linux on dwm, macOS on AeroSpace, one <code>bootstrap.sh</code> that sets up either, and one <code>theme</code> command that recolours every app from a single palette file.</p>
+        <div class="cta">
+          <a class="btn primary gh" href="https://github.com/AnissL93/personal-infra"><span id="octo"></span>AnissL93/personal-infra</a>
+          <a class="btn" href="install.html">Install →</a>
+          <a class="btn" href="gallery.html">Theme gallery →</a>
+        </div>
       </div>
       <div class="win" aria-label="Terminal showing the theme command">
         <div class="tb"><span>st</span><span id="win-name">~</span></div>
@@ -209,238 +30,105 @@ footer { margin-top: 5rem; padding-top: 1.2rem; border-top: 1px solid var(--bg_h
     </div>
   </header>
 
-  <section id="themes">
-    <h2 data-tag="2">Theme gallery <small id="theme-count"></small></h2>
-    <p class="lede">Each theme is one <code>NAME.conf</code> palette in <a href="https://github.com/AnissL93/Dotfiles/tree/main/themes">dotfiles/themes</a>, with a wallpaper from <a href="https://github.com/AnissL93/assets/tree/main/wallpapers">assets</a>. <code>theme NAME</code> applies it live to dwm, dmenu, st, alacritty, firefox, dunst, obsidian, rmpc, vscode, emacs, claude code, neovim, fcitx5, zathura, slock, the cursor and the wallpaper. Pick a card to see the full palette. This page switches to that theme too.</p>
-    <div class="filters" role="group" aria-label="Filter themes">
-      <button data-f="all" aria-pressed="true">all</button>
-      <button data-f="dark" aria-pressed="false">dark</button>
-      <button data-f="light" aria-pressed="false">light</button>
-      <button data-f="pixel" aria-pressed="false">pixel</button>
-      <button id="random" title="Apply a random theme">random</button>
-      <input id="q" type="search" placeholder="search: sakura, crt, forest…" aria-label="Search themes">
-      <span class="count" id="shown"></span>
-    </div>
-    <div class="grid" id="grid"></div>
-  </section>
+  <div class="facts" id="facts"></div>
 
-  <section id="modules">
-    <h2 data-tag="3">Modules</h2>
-    <p class="lede">Each part is its own repo, pulled in here as a git submodule. Commit and push inside the submodule first, then bump it here.</p>
-    <div class="mods">
-      <article class="mod" style="--c: var(--keyword)">
-        <h3>dotfiles/ <a href="https://github.com/AnissL93/Dotfiles">Dotfiles ↗</a></h3>
-        <p>App configs, the colour themes and the <code>theme</code> command. The user manual is <a href="https://github.com/AnissL93/Dotfiles/blob/main/MANUAL.md">MANUAL.md</a>.</p>
-        <ul><li>themes</li><li>alacritty</li><li>bash</li><li>doom emacs</li><li>nvim</li><li>vscode</li><li>firefox</li><li>obsidian</li><li>zathura</li><li>lf</li><li>hledger</li><li>claude</li><li>thefuck</li></ul>
-      </article>
-      <article class="mod" style="--c: var(--function)">
-        <h3>desktop/ <a href="https://github.com/AnissL93/desktop">desktop ↗</a></h3>
-        <p>The window-manager layer for each OS. On Linux: suckless tools as submodules, X11 startup, notifications, fonts and a cursor generator. On macOS: a tiling WM and hotkeys.</p>
-        <ul><li>dwm + dmenu + dwmblocks</li><li>st</li><li>slock</li><li>x11 / xinitrc</li><li>dunst</li><li>gtk-3.0</li><li>fontconfig</li><li>cursors</li><li>systemd</li><li>mac: aerospace</li><li>mac: skhd</li><li>mac: borders</li></ul>
-      </article>
-      <article class="mod" style="--c: var(--string)">
-        <h3>keymap/ <a href="https://github.com/AnissL93/homerow-keymap">homerow-keymap ↗</a></h3>
-        <p>One home-row layout on every machine: keyd on Linux, Karabiner on macOS. <a href="#keymap">See the drawing</a>.</p>
-        <ul><li>linux/keyd.conf</li><li>mac/karabiner</li><li>draw.py</li></ul>
-      </article>
-      <article class="mod" style="--c: var(--type)">
-        <h3>rime/ <a>private</a></h3>
-        <p>Rime input schemes for fcitx5: 小鹤双拼 with 形码 auxiliary codes. Typing history and build output are git-ignored.</p>
-        <ul><li>fcitx5</li><li>小鹤双拼</li><li>形码辅助</li><li>cn_dicts</li></ul>
-      </article>
-      <article class="mod" style="--c: var(--number)">
-        <h3>knowledge-forge/ <a href="https://github.com/AnissL93/knowledge-forge">knowledge-forge ↗</a></h3>
-        <p>A public Obsidian vault template for a research and startup pipeline, from inbox and sources to experiments, writing and finance.</p>
-        <ul><li>Inbox</li><li>Projects</li><li>Sources</li><li>Concepts</li><li>Experiments</li><li>Writing</li><li>Kanban</li><li>Templates</li></ul>
-      </article>
-      <article class="mod" style="--c: var(--warn)">
-        <h3>this repo <a href="https://github.com/AnissL93/personal-infra">personal-infra ↗</a></h3>
-        <p>Ties the modules together. <code>bootstrap.sh</code> installs everything from lists in <code>packages/</code> (apt, Brewfile, tools, /opt apps), builds what has no package (<code>builds/</code>) and links configs (<code>links.txt</code>). Every installed app is listed in <a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md">SOFTWARE.md</a>.</p>
-        <ul><li>bootstrap.sh</li><li>packages/</li><li>builds/</li><li>links.txt</li><li>SOFTWARE.md</li></ul>
-      </article>
-    </div>
-  </section>
-
-  <section id="scripts">
-    <h2 data-tag="4">Scripts <small id="script-count"></small></h2>
-    <p class="lede">Small tools on <code>$PATH</code>: bar blocks, dmenu helpers, font switchers, and the build scripts for things Ubuntu doesn't package.</p>
-    <div class="scripts" id="script-list"></div>
-  </section>
-
-  <section id="fonts">
-    <h2 data-tag="5">Fonts <small id="font-count"></small></h2>
-    <p class="lede">Pixel fonts for the everyday look, hand-drawn ones for the soft look: <code>font-preset pixel</code> or <code>font-preset bubble</code> switches Latin and Chinese together in every app. All of them are in the <a href="https://github.com/AnissL93/assets/tree/main/fonts">assets repo</a> with their licences, and <code>bootstrap.sh fonts</code> installs them.</p>
-    <div class="fonts" id="font-list"></div>
-  </section>
-
-  <section id="keymap">
-    <h2 data-tag="6">Keymap</h2>
-    <p class="lede">Home-row modifiers and layers, the same on Linux (keyd) and macOS (Karabiner). Drawn by <code>keymap/draw.py</code>.</p>
-    <div class="keymap"><img src="keymap.svg" alt="Keyboard layout with home-row modifiers and layers" loading="lazy"></div>
-  </section>
-
-  <section id="bootstrap">
-    <h2 data-tag="7">New machine</h2>
-    <p class="lede">Every step can be run on its own and run again safely. <code>./bootstrap.sh --help</code> lists them.</p>
-    <div class="boot">
-      <div class="win"><div class="tb"><span>st</span><span>clone</span></div><pre class="term"><span class="p">$</span> git clone --recursive git@github.com:AnissL93/personal-infra.git ~/System/personal-infra
-<span class="p">$</span> cd ~/System/personal-infra
-<span class="p">$</span> ./bootstrap.sh --dry-run   <span class="c"># look first</span>
-<span class="p">$</span> ./bootstrap.sh</pre></div>
-      <div class="win"><div class="tb"><span>st</span><span>submodules</span></div><pre class="term"><span class="c"># after a plain clone</span>
-<span class="p">$</span> git submodule update --init --recursive
-<span class="c"># change a module: push it first, then bump it here</span>
-<span class="p">$</span> git add dotfiles &amp;&amp; git commit -m "Bump dotfiles"</pre></div>
+  <section id="architecture">
+    <h2 data-tag="1">Architecture</h2>
+    <p class="lede">One parent repo holds the install machinery. Each part of the setup is its own repo, pulled in as a git submodule. To change a part, commit and push inside its submodule first, then record the new version in the parent.</p>
+    <div class="arch">
+      <div class="node root">
+        <h3>personal-infra <a class="repo" href="https://github.com/AnissL93/personal-infra">repo ↗</a></h3>
+        <p>The parent repo. It installs everything and holds no app config itself.</p>
+        <ul>
+          <li><code>bootstrap.sh</code> runs the steps for the detected OS</li>
+          <li><code>packages/</code> apt.txt, Brewfile, tools.txt, opt.txt</li>
+          <li><code>builds/</code> things built from source</li>
+          <li><code>links.txt</code> config symlinks into <code>$HOME</code>, per OS</li>
+          <li><a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md"><code>SOFTWARE.md</code></a> every installed app</li>
+          <li><code>docs/</code> this site</li>
+        </ul>
+      </div>
+      <div class="wire" aria-hidden="true">submodules</div>
+      <div class="mods">
+        <article class="mod" style="--c: var(--keyword)">
+          <h3>dotfiles/ <a class="repo" href="https://github.com/AnissL93/Dotfiles">Dotfiles ↗</a></h3>
+          <p>App configs, the colour themes and the <code>theme</code> command. The user manual is <a href="https://github.com/AnissL93/Dotfiles/blob/main/MANUAL.md">MANUAL.md</a>.</p>
+          <ul><li>themes</li><li>alacritty</li><li>kitty</li><li>bash</li><li>doom emacs</li><li>nvim</li><li>vscode</li><li>firefox</li><li>obsidian</li><li>zathura</li><li>lf</li><li>hledger</li><li>claude</li></ul>
+        </article>
+        <article class="mod" style="--c: var(--function)">
+          <h3>desktop/ <a class="repo" href="https://github.com/AnissL93/desktop">desktop ↗</a></h3>
+          <p>The window-manager layer, split per OS: <code>linux/</code> (suckless tools, X11, dunst, cursors) and <code>mac/</code> (AeroSpace, SketchyBar, a Swift dmenu, swallow).</p>
+          <ul><li>dwm + dmenu + dwmblocks</li><li>st</li><li>slock</li><li>dunst</li><li>mac: aerospace</li><li>mac: sketchybar</li><li>mac: dmenu</li><li>mac: borders</li></ul>
+        </article>
+        <article class="mod" style="--c: var(--string)">
+          <h3>keymap/ <a class="repo" href="https://github.com/AnissL93/homerow-keymap">homerow-keymap ↗</a></h3>
+          <p>One home-row layout on every machine: keyd on Linux, Karabiner rules generated from the same file on macOS.</p>
+          <ul><li>linux/keyd.conf</li><li>mac/karabiner</li><li>draw.py</li></ul>
+        </article>
+        <article class="mod" style="--c: var(--type)">
+          <h3>rime/ <span class="repo off">private</span></h3>
+          <p>Rime input schemes (小鹤双拼 with 形码 auxiliary codes) for fcitx5 on Linux and Squirrel on macOS.</p>
+          <ul><li>fcitx5</li><li>Squirrel</li><li>cn_dicts</li></ul>
+        </article>
+        <article class="mod" style="--c: var(--number)">
+          <h3>knowledge-forge/ <a class="repo" href="https://github.com/AnissL93/knowledge-forge">knowledge-forge ↗</a></h3>
+          <p>A public Obsidian vault template for a research and startup pipeline.</p>
+          <ul><li>Inbox</li><li>Projects</li><li>Sources</li><li>Experiments</li><li>Writing</li><li>Templates</li></ul>
+        </article>
+        <article class="mod" style="--c: var(--warn)">
+          <h3>assets <a class="repo" href="https://github.com/AnissL93/assets">assets ↗</a></h3>
+          <p>Not a submodule: fonts and wallpapers, fetched by <code>bootstrap.sh fonts</code> and by <code>theme</code> on first use.</p>
+          <ul><li>fonts</li><li>wallpapers</li></ul>
+        </article>
+      </div>
+      <div class="wire" aria-hidden="true">bootstrap.sh installs on</div>
+      <div class="plats">
+        <a class="plat" href="linux.html">
+          <h3>Linux <small id="n-linux"></small></h3>
+          <p>Debian/Ubuntu, dwm on X11: st, dmenu, dwmblocks, slock, dunst, keyd, fcitx5.</p>
+          <span class="go">Linux setup →</span>
+        </a>
+        <a class="plat" href="macos.html">
+          <h3>macOS <small id="n-macos"></small></h3>
+          <p>The same setup with a Mac tool for each Linux one: AeroSpace, SketchyBar, kitty, Karabiner, Squirrel.</p>
+          <span class="go">macOS setup →</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  <footer>
-    <span>Built from the repo by <code>docs/build.py</code>. Page colours come from the theme you pick.</span>
-    <a href="https://github.com/AnissL93/personal-infra">github.com/AnissL93/personal-infra</a>
-  </footer>
+  <section id="pages">
+    <h2 data-tag="2">Pages</h2>
+    <div class="plats">
+      <a class="plat" href="gallery.html"><h3>Gallery <small id="n-themes"></small></h3><p>Every colour theme with its wallpaper and palette, and the fonts. Picking one recolours this site.</p><span class="go">Open →</span></a>
+      <a class="plat" href="install.html"><h3>Install</h3><p>Set up a new Linux or macOS machine with one command: the steps, and what each one installs.</p><span class="go">Open →</span></a>
+      <a class="plat" href="usage.html"><h3>Usage</h3><p>Switching themes and fonts, the home-row keymap, the scripts on <code>$PATH</code>, and how to change things.</p><span class="go">Open →</span></a>
+      <a class="plat" href="apps.html"><h3>Apps <small id="n-all"></small></h3><p>Every installed app on both systems: how it is installed, where its config lives, whether it is themed.</p><span class="go">Open →</span></a>
+    </div>
+  </section>
 </main>
 
-<dialog id="detail" aria-labelledby="d-name"></dialog>
-<div class="toast" id="toast" role="status"></div>
-
 <script src="data.js"></script>
+<script src="site.js"></script>
 <script>
-const D = window.DATA, $ = s => document.querySelector(s);
-const RAW = "https://raw.githubusercontent.com/AnissL93/assets/main/wallpapers/";
-const UI = ["bg", "bg_alt", "bg_hl", "sel", "dim", "mid", "fg", "bright", "accent", "accent_fg", "bar", "bar_fg", "border"];
-const SYN = ["comment", "string", "number", "keyword", "function", "type", "punct", "err", "warn", "ok"];
-const ANSI = [...Array(16).keys()].map(i => "color" + i);
-const byId = Object.fromEntries(D.themes.map(t => [t.id, t]));
-const mode = t => t.mode || "dark";
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-
-function toast(msg) {
-  const el = $("#toast"); el.textContent = msg; el.classList.add("on");
-  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1400);
-}
-function copy(text) { navigator.clipboard?.writeText(text).then(() => toast("copied " + text), () => {}); }
-
-// paint the whole page with a theme
-function apply(id) {
-  const t = byId[id]; if (!t) return;
-  const r = document.documentElement.style;
-  for (const k of [...UI, ...SYN, ...ANSI]) if (t[k]) r.setProperty("--" + k, t[k]);
-  r.setProperty("--wall", t.thumb ? `url("${t.thumb}")` : "none");
-  document.documentElement.style.colorScheme = mode(t);
-  $("#bar-title").textContent = t.name || t.id;
+$("#octo").outerHTML = OCTO;
+$("#facts").innerHTML = [[D.themes.length, "themes"], [nApps("linux"), "Linux apps"], [nApps("macos"), "macOS apps"],
+  [nScripts, "scripts"], [D.fonts.length, "font families"]].map(([n, l]) => `<div><b>${n}</b>${l}</div>`).join("");
+$("#n-linux").textContent = nApps("linux") + " apps";
+$("#n-macos").textContent = nApps("macos") + " apps";
+$("#n-themes").textContent = D.themes.length + " themes";
+$("#n-all").textContent = nApps("all") + " apps";
+window.onTheme = t => {
   $("#win-name").textContent = t.id;
-  $("#st-mode").textContent = mode(t);
   $("#term").innerHTML =
 `<span class="p">$</span> theme ${esc(t.id)}
 <span class="c"># ${esc((t.about || t.name || "").split(/(?<=\.) /)[0])}</span>
-dwm dmenu st alacritty firefox dunst obsidian
-rmpc vscode emacs nvim fcitx5 zathura slock
-cursor wallpaper  <span style="color:var(--ok)">ok</span>
+dwm dmenu st alacritty kitty firefox dunst
+obsidian rmpc vscode emacs nvim fcitx5 zathura
+slock cursor wallpaper  <span style="color:var(--ok)">ok</span>
 <div class="blocks">${ANSI.map(c => `<span style="background:${t[c]}"></span>`).join("")}</div>`;
-  history.replaceState(null, "", "#theme=" + id);
-}
-
-// gallery
-let filter = "all";
-function card(t, i) {
-  const v = [...UI, "string"].map(k => `--c-${k}:${t[k]}`).join(";");
-  return `<button class="card" style="${v};--i:${Math.min(i, 30)}" data-id="${t.id}" aria-label="${esc(t.name || t.id)}, ${mode(t)} theme">
-    <div class="img${t.pixel ? " pixel" : ""}" ${t.thumb ? `style="background-image:url('${t.thumb}')"` : ""}></div>
-    <div class="cbar"><span>1</span><span>2</span><span>3</span><em>${esc(t.name || t.id)}</em></div>
-    <div class="body">
-      <div class="name">${esc(t.name || t.id)}<small>${mode(t)}${t.pixel ? " · pixel" : ""}</small></div>
-      <div class="swatch16">${ANSI.map(c => `<i style="background:${t[c]}"></i>`).join("")}</div>
-      <code>theme ${t.id}</code>
-    </div></button>`;
-}
-function render() {
-  const q = $("#q").value.trim().toLowerCase();
-  const list = D.themes.filter(t =>
-    (filter === "all" || (filter === "pixel" ? t.pixel : mode(t) === filter)) &&
-    (!q || `${t.id} ${t.name} ${t.about}`.toLowerCase().includes(q)));
-  $("#grid").innerHTML = list.map(card).join("");
-  $("#shown").textContent = `${list.length} shown`;
-}
-document.querySelectorAll(".filters [data-f]").forEach(b => b.onclick = () => {
-  filter = b.dataset.f;
-  document.querySelectorAll(".filters [data-f]").forEach(x => x.setAttribute("aria-pressed", x === b));
-  render();
-});
-$("#q").oninput = render;
-$("#random").onclick = () => { const t = D.themes[Math.floor(Math.random() * D.themes.length)]; apply(t.id); toast("theme " + t.id); };
-$("#grid").onclick = e => { const c = e.target.closest(".card"); if (c) open(c.dataset.id); };
-
-// detail dialog
-const sample = `<span class="cm"># theme: one palette, every app</span>
-<span class="k">def</span> <span class="f">apply</span><span class="pu">(</span>name<span class="pu">:</span> <span class="t">str</span><span class="pu">):</span>
-    t <span class="pu">=</span> <span class="f">load</span><span class="pu">(</span>name<span class="pu">)</span>
-    <span class="k">for</span> app <span class="k">in</span> <span class="pu">(</span>dwm<span class="pu">,</span> st<span class="pu">,</span> emacs<span class="pu">):</span>
-        app<span class="pu">(</span>t<span class="pu">,</span> size<span class="pu">=</span><span class="n">16</span><span class="pu">)</span>
-    <span class="k">return</span> <span class="s">"ok"</span>`;
-const swatches = (t, keys) => `<div class="pal">${keys.filter(k => t[k]).map(k =>
-  `<button data-hex="${t[k]}" title="copy ${t[k]}"><i style="background:${t[k]}"></i><span>${k}</span><span>${t[k]}</span></button>`).join("")}</div>`;
-function open(id) {
-  const t = byId[id], dlg = $("#detail");
-  apply(id);
-  const base = t.wall ? t.wall.replace(/-2560\.\w+$/, "") : "";
-  dlg.innerHTML = `
-    <div class="d-img${t.pixel ? " pixel" : ""}" ${t.thumb ? `style="background-image:url('${t.thumb}')"` : ""}>
-      <button class="d-close" aria-label="Close">esc ✕</button>
-      ${t.wall ? `<div class="links"><a href="${RAW + t.wall}" target="_blank" rel="noopener">2560 ↗</a>${t.wall_wide ? `<a href="${RAW + t.wall_wide}" target="_blank" rel="noopener">3440 ultrawide ↗</a>` : ""}</div>` : ""}
-    </div>
-    <div class="d-body">
-      <div style="display:grid;gap:.8rem;align-content:start">
-        <h3 id="d-name">${esc(t.name || t.id)}</h3>
-        <p style="margin:0;color:var(--mid)">${esc(t.about)}</p>
-        <div><code class="copy" data-cmd="theme ${t.id}" title="copy">theme ${t.id}</code>
-          <a href="https://github.com/AnissL93/Dotfiles/blob/main/themes/${t.id}.conf" style="margin-left:.8rem">${t.id}.conf ↗</a></div>
-        <pre class="code">${sample}</pre>
-      </div>
-      <div style="display:grid;gap:.9rem;align-content:start">
-        <div><h4>interface</h4>${swatches(t, UI)}</div>
-        <div><h4>syntax</h4>${swatches(t, SYN)}</div>
-        <div><h4>terminal 0–15</h4>${swatches(t, ANSI)}</div>
-      </div>
-    </div>`;
-  if (!dlg.open) dlg.showModal();
-}
-$("#detail").onclick = e => {
-  const d = $("#detail");
-  if (e.target === d || e.target.closest(".d-close")) return d.close();
-  const sw = e.target.closest("[data-hex]"); if (sw) copy(sw.dataset.hex);
-  const cm = e.target.closest("[data-cmd]"); if (cm) copy(cm.dataset.cmd);
 };
-
-// scripts
-const groups = Object.entries(D.scripts);
-$("#script-list").innerHTML = groups.map(([dir, list]) => `<div class="sgroup"><h3>${dir}/</h3>${list.map(s =>
-  `<div class="srow"><a href="${s.url}">${esc(s.name)}</a><span>${esc(s.about)}</span></div>`).join("")}</div>`).join("");
-const nScripts = groups.reduce((n, [, l]) => n + l.length, 0);
-$("#script-count").textContent = `${nScripts} files`;
-
-// fonts
-$("#font-list").innerHTML = D.fonts.map(f => `<figure class="font">
-  <img src="${f.preview}" alt="Preview of ${esc(f.family)}" loading="lazy">
-  <figcaption><b>${esc(f.family)}<a href="${f.files}">${f.folder}/ ↗</a></b>
-  <dl><dt>used for</dt><dd>${f.used}</dd><dt>original</dt><dd>${f.original}</dd><dt>licence</dt><dd>${f.licence}</dd></dl>
-  </figcaption></figure>`).join("");
-$("#font-count").textContent = `${D.fonts.length} families`;
-
-// bar status + active tag
-$("#theme-count").textContent = `${D.themes.length} themes`;
-$("#st-count").textContent = `${D.themes.length} themes · ${nScripts} scripts`;
-const tick = () => $("#st-clock").textContent = new Date().toTimeString().slice(0, 5);
-tick(); setInterval(tick, 30000);
-const tags = [...document.querySelectorAll(".tags a")];
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) tags.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
-}), { rootMargin: "-45% 0px -50% 0px" });
-document.querySelectorAll("#top, section").forEach(s => io.observe(s));
-
-render();
-const start = (location.hash.match(/theme=([\w-]+)/) || [])[1];
-const darks = D.themes.filter(t => mode(t) === "dark" && !t.pixel && t.thumb);
-apply(byId[start] ? start : darks[Math.floor(Math.random() * darks.length)].id);
+paint(startTheme());
 </script>
 </body>
 </html>

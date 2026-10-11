@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theme Gallery</title>
+<meta name="description" content="200 colour themes for a dwm / AeroSpace desktop, each with a wallpaper and a full palette, and the fonts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section id="themes">
+    <h2 data-tag="themes">Theme gallery <small id="theme-count"></small></h2>
+    <p class="lede">Each theme is one <code>NAME.conf</code> palette in <a href="https://github.com/AnissL93/Dotfiles/tree/main/themes">dotfiles/themes</a>, with a wallpaper from <a href="https://github.com/AnissL93/assets/tree/main/wallpapers">assets</a>. <code>theme NAME</code> applies it live to dwm, dmenu, st, alacritty, kitty, firefox, dunst, obsidian, rmpc, vscode, emacs, claude code, neovim, fcitx5, zathura, slock, the cursor and the wallpaper, and on macOS to light/dark mode, SketchyBar, the window borders, CodeIsland and the pointer. Pick a card to see the full palette. The whole site switches to that theme too.</p>
+    <div class="filters" role="group" aria-label="Filter themes">
+      <button data-f="all" aria-pressed="true">all</button>
+      <button data-f="dark" aria-pressed="false">dark</button>
+      <button data-f="light" aria-pressed="false">light</button>
+      <button data-f="pixel" aria-pressed="false">pixel</button>
+      <button id="random" title="Apply a random theme">random</button>
+      <input id="q" type="search" placeholder="search: sakura, crt, forest…" aria-label="Search themes">
+      <span class="count" id="shown"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="fonts">
+    <h2 data-tag="fonts">Fonts <small id="font-count"></small></h2>
+    <p class="lede">Pixel fonts for the everyday look, hand-drawn ones for the soft look: <code>font-preset pixel</code> or <code>font-preset bubble</code> switches Latin and Chinese together in every app. All of them are in the <a href="https://github.com/AnissL93/assets/tree/main/fonts">assets repo</a> with their licences, and <code>bootstrap.sh fonts</code> installs them.</p>
+    <div class="fonts" id="font-list"></div>
+  </section>
+</main>
+
+<dialog id="detail" aria-labelledby="d-name"></dialog>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+const RAW = "https://raw.githubusercontent.com/AnissL93/assets/main/wallpapers/";
+const apply = id => { paint(id); history.replaceState(null, "", "#theme=" + id); };
+
+let filter = "all";
+function card(t, i) {
+  const v = [...UI, "string"].map(k => `--c-${k}:${t[k]}`).join(";");
+  return `<button class="card" style="${v};--i:${Math.min(i, 30)}" data-id="${t.id}" aria-label="${esc(t.name || t.id)}, ${mode(t)} theme">
+    <div class="img${t.pixel ? " pixel" : ""}" ${t.thumb ? `style="background-image:url('${t.thumb}')"` : ""}></div>
+    <div class="cbar"><span>1</span><span>2</span><span>3</span><em>${esc(t.name || t.id)}</em></div>
+    <div class="body">
+      <div class="name">${esc(t.name || t.id)}<small>${mode(t)}${t.pixel ? " · pixel" : ""}</small></div>
+      <div class="swatch16">${ANSI.map(c => `<i style="background:${t[c]}"></i>`).join("")}</div>
+      <code>theme ${t.id}</code>
+    </div></button>`;
+}
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  const list = D.themes.filter(t =>
+    (filter === "all" || (filter === "pixel" ? t.pixel : mode(t) === filter)) &&
+    (!q || `${t.id} ${t.name} ${t.about}`.toLowerCase().includes(q)));
+  $("#grid").innerHTML = list.map(card).join("");
+  $("#shown").textContent = `${list.length} shown`;
+}
+document.querySelectorAll(".filters [data-f]").forEach(b => b.onclick = () => {
+  filter = b.dataset.f;
+  document.querySelectorAll(".filters [data-f]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+});
+$("#q").oninput = render;
+$("#random").onclick = () => { const t = D.themes[Math.floor(Math.random() * D.themes.length)]; apply(t.id); toast("theme " + t.id); };
+$("#grid").onclick = e => { const c = e.target.closest(".card"); if (c) open(c.dataset.id); };
+
+const sample = `<span class="cm"># theme: one palette, every app</span>
+<span class="k">def</span> <span class="f">apply</span><span class="pu">(</span>name<span class="pu">:</span> <span class="t">str</span><span class="pu">):</span>
+    t <span class="pu">=</span> <span class="f">load</span><span class="pu">(</span>name<span class="pu">)</span>
+    <span class="k">for</span> app <span class="k">in</span> <span class="pu">(</span>dwm<span class="pu">,</span> st<span class="pu">,</span> emacs<span class="pu">):</span>
+        app<span class="pu">(</span>t<span class="pu">,</span> size<span class="pu">=</span><span class="n">16</span><span class="pu">)</span>
+    <span class="k">return</span> <span class="s">"ok"</span>`;
+const swatches = (t, keys) => `<div class="pal">${keys.filter(k => t[k]).map(k =>
+  `<button data-hex="${t[k]}" title="copy ${t[k]}"><i style="background:${t[k]}"></i><span>${k}</span><span>${t[k]}</span></button>`).join("")}</div>`;
+function open(id) {
+  const t = byId[id], dlg = $("#detail");
+  apply(id);
+  dlg.innerHTML = `
+    <div class="d-img${t.pixel ? " pixel" : ""}" ${t.thumb ? `style="background-image:url('${t.thumb}')"` : ""}>
+      <button class="d-close" aria-label="Close">esc ✕</button>
+      ${t.wall ? `<div class="links"><a href="${RAW + t.wall}" target="_blank" rel="noopener">2560 ↗</a>${t.wall_wide ? `<a href="${RAW + t.wall_wide}" target="_blank" rel="noopener">3440 ultrawide ↗</a>` : ""}</div>` : ""}
+    </div>
+    <div class="d-body">
+      <div style="display:grid;gap:.8rem;align-content:start">
+        <h3 id="d-name">${esc(t.name || t.id)}</h3>
+        <p style="margin:0;color:var(--mid)">${esc(t.about)}</p>
+        <div><code class="copy" data-cmd="theme ${t.id}" title="copy">theme ${t.id}</code>
+          <a href="https://github.com/AnissL93/Dotfiles/blob/main/themes/${t.id}.conf" style="margin-left:.8rem">${t.id}.conf ↗</a></div>
+        <pre class="code">${sample}</pre>
+      </div>
+      <div style="display:grid;gap:.9rem;align-content:start">
+        <div><h4>interface</h4>${swatches(t, UI)}</div>
+        <div><h4>syntax</h4>${swatches(t, SYN)}</div>
+        <div><h4>terminal 0–15</h4>${swatches(t, ANSI)}</div>
+      </div>
+    </div>`;
+  if (!dlg.open) dlg.showModal();
+}
+$("#detail").onclick = e => {
+  const d = $("#detail");
+  if (e.target === d || e.target.closest(".d-close")) return d.close();
+  const sw = e.target.closest("[data-hex]"); if (sw) copy(sw.dataset.hex);
+  const cm = e.target.closest("[data-cmd]"); if (cm) copy(cm.dataset.cmd);
+};
+
+$("#font-list").innerHTML = D.fonts.map(f => `<figure class="font">
+  <img src="${f.preview}" alt="Preview of ${esc(f.family)}" loading="lazy">
+  <figcaption><b>${esc(f.family)}<a href="${f.files}">${f.folder}/ ↗</a></b>
+  <dl><dt>used for</dt><dd>${f.used}</dd><dt>original</dt><dd>${f.original}</dd><dt>licence</dt><dd>${f.licence}</dd></dl>
+  </figcaption></figure>`).join("");
+$("#font-count").textContent = `${D.fonts.length} families`;
+$("#theme-count").textContent = `${D.themes.length} themes`;
+
+render();
+paint(startTheme());
+</script>
+</body>
+</html>

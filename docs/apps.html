@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All Apps</title>
+<meta name="description" content="Every app installed by personal-infra on Linux and macOS, how it is installed and where its config lives.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section id="apps">
+    <h2 data-tag="apps">All apps <small id="n"></small></h2>
+    <p class="lede">Everything installed on both systems, from <a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md">SOFTWARE.md</a>. For one system only, see <a href="linux.html#apps">Linux</a> or <a href="macos.html#apps">macOS</a>. <b>manual</b> means installed by hand: a fresh machine will not get it from <code>bootstrap.sh</code>. Where an app is installed differently, "installed by" reads "Linux way / macOS way".</p>
+    <div class="filters" role="group" aria-label="Filter apps">
+      <button data-f="" aria-pressed="true">all</button>
+      <button data-f="L" aria-pressed="false">linux</button>
+      <button data-f="M" aria-pressed="false">macos</button>
+      <input id="q" type="search" placeholder="search: emacs, Brewfile, manual…" aria-label="Search apps">
+      <span class="count" id="shown"></span>
+    </div>
+    <div class="legend"><span><span class="mark th">themed</span> coloured by <code>theme</code></span><span><span class="mark both">both</span> on Linux and macOS</span></div>
+    <div id="apps-list"></div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+let only = "";
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  $("#apps-list").innerHTML = appTables("all", q, only) || '<p class="lede">No app matches.</p>';
+  $("#shown").textContent = `${document.querySelectorAll("#apps-list tbody tr").length} shown`;
+}
+document.querySelectorAll(".filters [data-f]").forEach(b => b.onclick = () => {
+  only = b.dataset.f;
+  document.querySelectorAll(".filters [data-f]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+});
+$("#q").oninput = render;
+$("#n").textContent = nApps("all") + " apps";
+render();
+paint(startTheme());
+</script>
+</body>
+</html>

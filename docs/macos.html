@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>macOS Setup</title>
+<meta name="description" content="The macOS side of personal-infra: AeroSpace, SketchyBar, kitty, a Swift dmenu, and every installed app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="hero sub">
+    <div>
+      <h1>macOS</h1>
+      <p>The same setup as far as macOS allows: same fonts (24 pt, 3x the pixel grid on Retina), themes, Emacs and keys, with <code>cmd</code> as dwm's Super and a Mac tool in place of each Linux one. Config lives in <a href="https://github.com/AnissL93/desktop/tree/main/mac">desktop/mac</a>; the full guide is chapter 13 of the <a href="https://github.com/AnissL93/Dotfiles/blob/main/MANUAL.md#13-macos">manual</a>.</p>
+      <div class="cta"><a class="btn primary" href="https://github.com/AnissL93/desktop/tree/main/mac">desktop/mac on GitHub ↗</a><a class="btn" href="#apps">All macOS apps ↓</a></div>
+    </div>
+  </header>
+
+  <section id="map">
+    <h2 data-tag="1">Linux → Mac</h2>
+    <div class="scripts mac">
+      <div class="srow"><b>dwm → AeroSpace</b><span>Same keys, workspaces 1–10 summoned like tags; skhd adds <code>cmd-left/right</code>, which AeroSpace cannot see.</span></div>
+      <div class="srow"><b>dwm borders → JankyBorders</b><span>Colours from <code>theme</code>.</span></div>
+      <div class="srow"><b>dwmblocks → SketchyBar</b><span>Tags with app icons, weather, network, input method, memory, battery and date, in the theme's bar colours.</span></div>
+      <div class="srow"><b>dmenu → dmenu in Swift</b><span>Same flags and keys, drawn over the bar. Typing <code>firefox</code> opens a new window.</span></div>
+      <div class="srow"><b>st → kitty</b><span>st's keys: <code>alt-l</code> open a link, <code>alt-y</code> copy one, <code>alt-o</code> copy the last command's output. One kitty process, so a window opens in 0.2 s.</span></div>
+      <div class="srow"><b>dwm swallow → swallow</b><span>An app started from a terminal hides that terminal until it exits, through an AeroSpace rule and a zsh hook.</span></div>
+      <div class="srow"><b>zathura → zathura</b><span>From Homebrew, with <code>Zathura.app</code> so Finder opens PDF, EPUB and MOBI in it.</span></div>
+      <div class="srow"><b>keyd → Karabiner</b><span>Rules generated from the same <code>keyd.conf</code>.</span></div>
+      <div class="srow"><b>fcitx5 → Squirrel</b><span>The same Rime schemes.</span></div>
+      <div class="srow"><b>getpass → getpass</b><span>pass + dmenu, with <code>pinentry-mac</code>.</span></div>
+      <div class="srow"><b>dunst, slock, flameshot</b><span>Notification Center, <code>ctrl-cmd-q</code>, <code>cmd-shift-5</code>.</span></div>
+      <div class="srow"><b>redshift → f.lux</b><span></span></div>
+      <div class="srow"><b>playerctl, pulsemixer</b><span>nowplaying-cli, switchaudio-osx.</span></div>
+      <div class="srow"><b>— → CodeIsland</b><span>Claude Code / Codex status around the notch.</span></div>
+    </div>
+  </section>
+
+  <section id="keys">
+    <h2 data-tag="2">Keys <small>cmd = dwm's Super</small></h2>
+    <div class="scripts mac">
+      <div class="srow"><b>cmd-enter</b><span>kitty</span></div>
+      <div class="srow"><b>cmd-d</b><span>dmenu</span></div>
+      <div class="srow"><b>cmd-e / cmd-shift-e</b><span>Emacs / emacs-everywhere</span></div>
+      <div class="srow"><b>cmd-shift-w</b><span>Firefox</span></div>
+      <div class="srow"><b>cmd-shift-d</b><span>emoji</span></div>
+      <div class="srow"><b>cmd-j/k</b><span>focus next / previous; with Shift, swap</span></div>
+      <div class="srow"><b>cmd-h/l</b><span>resize</span></div>
+      <div class="srow"><b>cmd-1..0</b><span>workspace, summoned onto the focused monitor; with Shift, send the window</span></div>
+      <div class="srow"><b>cmd-comma/period</b><span>focus the other monitor; with Shift, move the window there</span></div>
+      <div class="srow"><b>cmd-shift-space</b><span>layout</span></div>
+      <div class="srow"><b>cmd-shift-b</b><span>hide the bar</span></div>
+      <div class="srow"><b>cmd-q</b><span>close window</span></div>
+      <div class="srow"><b>alt-tab</b><span>toggle the last two workspaces</span></div>
+    </div>
+    <p class="lede">Core macOS shortcuts (<code>cmd-c/v/x/z/s/t/w/f</code>, Spotlight, <code>cmd-tab</code>) are unchanged. Full list: <a href="https://github.com/AnissL93/desktop/blob/main/mac/aerospace/README.md">desktop/mac/aerospace/README.md</a>.</p>
+  </section>
+
+  <section id="setup">
+    <h2 data-tag="3">Setup notes</h2>
+    <div class="scripts mac">
+      <div class="srow"><b>steps</b><span><code>./bootstrap.sh</code> runs <code>packages tools builds fonts links shell emacs defaults services theme</code>. See <a href="install.html">install</a>.</span></div>
+      <div class="srow"><b>apps installed by hand</b><span><code>HOMEBREW_CASK_OPTS=--adopt brew bundle --file packages/Brewfile</code></span></div>
+      <div class="srow"><b>password casks</b><span>Squirrel, Karabiner, Docker, Tailscale and Bitwarden must be installed from a terminal.</span></div>
+      <div class="srow"><b>no Xcode</b><span>dmenu, <code>Zathura.app</code> and CodeIsland need only the command-line tools.</span></div>
+      <div class="srow"><b>by hand once</b><span>Enable the "keymap" rules in Karabiner; allow SketchyBar, AeroSpace and skhd under Accessibility.</span></div>
+      <div class="srow"><b>~/.zshrc</b><span>Not in git; step <code>shell</code> adds the swallow hook to it.</span></div>
+    </div>
+  </section>
+
+  <section id="apps">
+    <h2 data-tag="4">Apps <small id="n"></small></h2>
+    <p class="lede">From <a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md">SOFTWARE.md</a>. <b>manual</b> means installed by hand: a fresh machine will not get it from <code>bootstrap.sh</code>. Config paths are inside personal-infra.</p>
+    <div class="legend"><span><span class="mark th">themed</span> coloured by <code>theme</code></span><span><span class="mark both">both</span> also on Linux</span></div>
+    <div id="apps-list"></div>
+  </section>
+
+  <section id="scripts">
+    <h2 data-tag="5">Scripts</h2>
+    <div class="scripts" id="script-list"></div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+$("#apps-list").innerHTML = appTables("macos");
+$("#n").textContent = nApps("macos") + " apps";
+$("#script-list").innerHTML = scriptList(["desktop/mac/bin"]);
+paint(startTheme());
+</script>
+</body>
+</html>

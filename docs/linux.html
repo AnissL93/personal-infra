@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linux Setup</title>
+<meta name="description" content="The Linux side of personal-infra: dwm on X11, its keys, and every installed app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="hero sub">
+    <div>
+      <h1>Linux</h1>
+      <p>Debian/Ubuntu with dwm on X11, started from gdm or <code>startx</code>. The suckless tools are my own forks, built into <code>/usr/local</code> by <code>bootstrap.sh suckless</code>. Config lives in <a href="https://github.com/AnissL93/desktop/tree/main/linux">desktop/linux</a> and <a href="https://github.com/AnissL93/Dotfiles">Dotfiles</a>.</p>
+      <div class="cta"><a class="btn primary" href="https://github.com/AnissL93/desktop/tree/main/linux">desktop/linux on GitHub ↗</a><a class="btn" href="#apps">All Linux apps ↓</a></div>
+    </div>
+  </header>
+
+  <section id="desktop">
+    <h2 data-tag="1">The desktop</h2>
+    <div class="scripts mac">
+      <div class="srow"><b>dwm</b><span>Tiling window manager, tags 1–9 per monitor.</span></div>
+      <div class="srow"><b>dwmblocks</b><span>The status bar: the blocks are scripts in <code>desktop/linux/scripts/</code>.</span></div>
+      <div class="srow"><b>dmenu</b><span>Launcher and the base of the helper menus (emoji, passwords, mounting drives).</span></div>
+      <div class="srow"><b>st</b><span>Terminal. Alacritty is installed and themed too.</span></div>
+      <div class="srow"><b>slock</b><span>Screen lock (no keybinding: run <code>slock</code>).</span></div>
+      <div class="srow"><b>dunst</b><span>Notifications.</span></div>
+      <div class="srow"><b>keyd</b><span>The home-row keymap, system-wide: <code>/etc/keyd/default.conf</code> links to <code>keymap/linux/keyd.conf</code>.</span></div>
+      <div class="srow"><b>fcitx5 + Rime</b><span>Chinese input with the Rime schemes.</span></div>
+      <div class="srow"><b>cursors</b><span>Generated per theme by <code>theme</code>.</span></div>
+    </div>
+  </section>
+
+  <section id="keys">
+    <h2 data-tag="2">Keys <small>Super = the Windows key</small></h2>
+    <div class="scripts mac">
+      <div class="srow"><b>Super+Enter</b><span>terminal (st)</span></div>
+      <div class="srow"><b>Super+d</b><span>launcher (dmenu)</span></div>
+      <div class="srow"><b>Super+e</b><span>Emacs</span></div>
+      <div class="srow"><b>Super+Shift+w</b><span>Firefox</span></div>
+      <div class="srow"><b>Super+Shift+f</b><span>file manager (lf in st)</span></div>
+      <div class="srow"><b>Super+Shift+p</b><span>screenshot</span></div>
+      <div class="srow"><b>Super+Shift+d</b><span>emoji picker</span></div>
+      <div class="srow"><b>Super+q</b><span>close window</span></div>
+      <div class="srow"><b>Super+f / Super+m</b><span>toggle floating / fullscreen</span></div>
+      <div class="srow"><b>Super+1..9</b><span>switch tag; with Shift, move the window there</span></div>
+      <div class="srow"><b>Super+. / Super+,</b><span>next / previous monitor</span></div>
+      <div class="srow"><b>Super+Shift+F5</b><span>reload colours from X resources</span></div>
+      <div class="srow"><b>Super+Ctrl+q</b><span>quit dwm (back to the TTY; <code>startx</code> to return)</span></div>
+    </div>
+  </section>
+
+  <section id="apps">
+    <h2 data-tag="3">Apps <small id="n"></small></h2>
+    <p class="lede">From <a href="https://github.com/AnissL93/personal-infra/blob/main/SOFTWARE.md">SOFTWARE.md</a>. <b>manual</b> means installed by hand: a fresh machine will not get it from <code>bootstrap.sh</code>. Config paths are inside personal-infra.</p>
+    <div class="legend"><span><span class="mark th">themed</span> coloured by <code>theme</code></span><span><span class="mark both">both</span> also on macOS</span></div>
+    <div id="apps-list"></div>
+  </section>
+
+  <section id="scripts">
+    <h2 data-tag="4">Scripts</h2>
+    <div class="scripts" id="script-list"></div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+$("#apps-list").innerHTML = appTables("linux");
+$("#n").textContent = nApps("linux") + " apps";
+$("#script-list").innerHTML = scriptList(["desktop/linux/scripts", "desktop/linux/bin"]);
+paint(startTheme());
+</script>
+</body>
+</html>

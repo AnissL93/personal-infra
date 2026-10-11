@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Usage Guide</title>
+<meta name="description" content="Using personal-infra: themes, fonts, the home-row keymap, scripts and changing the setup.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section id="look">
+    <h2 data-tag="1">Themes and fonts</h2>
+    <p class="lede">One palette file recolours every app, on both systems. Browse them in the <a href="gallery.html">gallery</a>. The full guide is chapter 7 of the <a href="https://github.com/AnissL93/Dotfiles/blob/main/MANUAL.md#7-colour-themes-theme">manual</a>.</p>
+    <div class="boot">
+      <div class="win"><div class="tb"><span>st</span><span>theme</span></div><pre class="term"><span class="p">$</span> theme              <span class="c"># list themes</span>
+<span class="p">$</span> theme vapor        <span class="c"># apply one everywhere</span>
+<span class="p">$</span> changebg           <span class="c"># the theme's wallpaper again</span>
+<span class="p">$</span> changebg image.png <span class="c"># any image, or a directory</span></pre></div>
+      <div class="win"><div class="tb"><span>st</span><span>fonts</span></div><pre class="term"><span class="p">$</span> font-preset pixel  <span class="c"># pixel fonts, Latin + Chinese</span>
+<span class="p">$</span> font-preset bubble <span class="c"># hand-drawn fonts</span>
+<span class="p">$</span> set-en-font "Family" [px]
+<span class="p">$</span> set-cjk-font "Family" [px]</pre></div>
+    </div>
+    <p class="lede"><code>theme</code> writes generated files that are not in git: <code>~/.config/theme/</code> (current theme, X resources, Emacs, Neovim, zathura and kitty colours), the alacritty and dunst theme files, Firefox's <code>theme-colors.css</code>, the cursor themes, a VS Code theme extension, the Claude Code theme and the fcitx5 skin.</p>
+  </section>
+
+  <section id="keymap">
+    <h2 data-tag="2">Keymap</h2>
+    <p class="lede">Home-row modifiers and layers, the same on Linux (keyd) and macOS (Karabiner rules generated from the same <code>keyd.conf</code>). Drawn by <code>keymap/draw.py</code> in <a href="https://github.com/AnissL93/homerow-keymap">homerow-keymap</a>. The window-manager keys are on the <a href="linux.html#keys">Linux</a> and <a href="macos.html#keys">macOS</a> pages.</p>
+    <div class="keymap"><img src="keymap.svg" alt="Keyboard layout with home-row modifiers and layers" loading="lazy"></div>
+  </section>
+
+  <section id="change">
+    <h2 data-tag="3">Changing things</h2>
+    <div class="scripts">
+      <div class="srow"><b>edit a config</b><span>Every config in <code>$HOME</code> is a symlink into the repo (<code>links.txt</code>), so edit it in place and commit in its submodule. Scripts that edit these files must follow symlinks (<code>sed -i --follow-symlinks</code>), or the link becomes a plain file and the change leaves git.</span></div>
+      <div class="srow"><b>add software</b><span>Add a line to <code>packages/apt.txt</code>, <code>Brewfile</code>, <code>tools.txt</code> or <code>opt.txt</code>, and a row to <code>SOFTWARE.md</code>. Then run <code>./bootstrap.sh packages</code> (or <code>tools</code>, <code>opt</code>).</span></div>
+      <div class="srow"><b>add a theme</b><span>Add <code>dotfiles/themes/NAME.conf</code>, then run <code>docs/build.py</code> to refresh this site.</span></div>
+      <div class="srow"><b>commit a module</b><span>Commit and push inside the submodule first, then <code>git add dotfiles &amp;&amp; git commit</code> in personal-infra.</span></div>
+    </div>
+  </section>
+
+  <section id="scripts">
+    <h2 data-tag="4">Scripts <small id="script-count"></small></h2>
+    <p class="lede">Small tools on <code>$PATH</code>: bar blocks, dmenu helpers, font switchers, the macOS helpers (dmenu, swallow, kitty windows), and the build scripts for things the package managers don't have.</p>
+    <div class="scripts" id="script-list"></div>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+$("#script-list").innerHTML = scriptList(Object.keys(D.scripts));
+$("#script-count").textContent = `${nScripts} files`;
+paint(startTheme());
+</script>
+</body>
+</html>
