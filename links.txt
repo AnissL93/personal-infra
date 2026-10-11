@@ -8,6 +8,7 @@
 
 # paths that scripts refer to
 LM  dotfiles                                  ~/System/dotfiles
+LM  syncthing-hub                             ~/System/syncthing
 
 # X session and the dwm desktop
 L   desktop/linux/x11/xinitrc                 ~/.xinitrc

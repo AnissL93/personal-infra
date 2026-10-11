@@ -31,7 +31,7 @@
 
   <section id="steps">
     <h2 data-tag="2">Steps <small>./bootstrap.sh --help</small></h2>
-    <p class="lede">Run in this order. <b class="mark both">L</b> Linux, <b class="mark both">M</b> macOS.</p>
+    <p class="lede">Run in this order (14 on Linux, 11 on macOS). <b class="mark both">L</b> Linux, <b class="mark both">M</b> macOS.</p>
     <table class="apps steps">
       <thead><tr><th>step</th><th>os</th><th>what it does</th></tr></thead>
       <tbody>
@@ -48,6 +48,7 @@
         <tr><td>keyboard</td><td data-k="os">L</td><td data-k="does">keyd remap: <code>/etc/keyd/default.conf</code> links to <code>keymap/linux/keyd.conf</code></td></tr>
         <tr><td>defaults</td><td data-k="os">L M</td><td data-k="does">zathura as the default document viewer</td></tr>
         <tr><td>services</td><td data-k="os">M</td><td data-k="does">starts skhd, borders and SketchyBar</td></tr>
+        <tr><td>syncthing</td><td data-k="os">L M</td><td data-k="does">starts Syncthing at login (Linux: user service + linger; macOS: puts Syncthing.app's CLI on <code>PATH</code>), then runs <a href="https://github.com/AnissL93/syncthing-hub">syncthing-hub</a>'s <code>inspect</code> on <code>syncthing-hub/config.toml</code>. <code>apply</code>, which changes every machine over SSH, is run by hand</td></tr>
         <tr><td>theme</td><td data-k="os">L M</td><td data-k="does">generates all colours, cursors and the wallpaper (amber, or the current theme)</td></tr>
       </tbody>
     </table>

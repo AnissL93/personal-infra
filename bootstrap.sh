@@ -29,6 +29,7 @@
 #   keyboard   L    keyd remap: /etc/keyd/default.conf -> keymap/linux/keyd.conf
 #   defaults   L M  zathura as the default document viewer
 #   services   M    start skhd, borders and sketchybar
+#   syncthing  L M  Syncthing at login, then check the hub-and-spoke layout (syncthing-hub/config.toml)
 #   theme      L M  generate all colours, cursors, wallpaper (amber, or the current theme)
 #
 # Needs sudo (Linux) for packages, suckless, builds, opt, session and keyboard.
@@ -281,6 +282,26 @@ step_services() {
     x brew services restart sketchybar
 }
 
+step_syncthing() {
+    say "syncthing"
+    if [ "$OS" = M ]; then          # the Brewfile's Syncthing.app starts it at login but keeps the CLI off PATH
+        link /Applications/Syncthing.app/Contents/Resources/syncthing/syncthing /opt/homebrew/bin/syncthing
+    elif have syncthing; then
+        x systemctl --user enable --now syncthing.service
+        x sudo loginctl enable-linger "$USER"      # keep running after logout (the hub is always on)
+    else
+        say "syncthing is not installed: add its vendor apt repo (end of packages/apt.txt), then re-run this step"
+        return
+    fi
+    local cfg="$ROOT/syncthing-hub/config.toml"      # git-ignored: hosts stay out of the public repo
+    if [ -f "$cfg" ]; then         # inspect only reads; `apply` changes every machine over SSH, so it stays by hand
+        x uv run -q --no-project --python 3.12 "$ROOT/syncthing-hub/bin/syncthing-hubspoke.py" inspect "$cfg" || true
+        say "to apply: uv run --python 3.12 syncthing-hub/bin/syncthing-hubspoke.py apply syncthing-hub/config.toml"
+    else
+        say "no syncthing-hub/config.toml: copy config.example.toml there (see syncthing-hub/README.md)"
+    fi
+}
+
 step_theme() {
     say "colour theme"
     local t; t="$(cat "$HOME/.config/theme/current" 2>/dev/null || echo amber)"
@@ -295,6 +316,7 @@ manual_steps() {
     if [ "$OS" = L ]; then cat <<'EOF'
 
 Left to do by hand:
+  - syncthing-hub/config.toml (hosts, not in git), then `./bootstrap.sh syncthing`
   - credentials (never in git): ~/System/dotfiles/doom/secrets.el, ~/.password-store,
     ~/.config/x2ray/*.json, ssh keys (mix-mpd is a private repo: the builds step needs them)
   - vendor apt repos, then their packages: see the end of packages/apt.txt
@@ -310,6 +332,7 @@ Left to do by hand:
   - apps installed by hand before: run the packages step once as
     HOMEBREW_CASK_OPTS=--adopt ./bootstrap.sh packages   (else brew stops at "already an App")
   - credentials: ssh keys, ~/System/dotfiles/doom/secrets.el
+  - syncthing-hub/config.toml (hosts, not in git), then `./bootstrap.sh syncthing`
   - open AeroSpace once and allow it (and skhd) in System Settings > Privacy > Accessibility
   - Karabiner-Elements: open it, allow its driver, then Complex Modifications > Add rule >
     enable the "keymap" rules for your keyboard (right_command = Mac layout, right_alt = Windows layout)
@@ -323,15 +346,15 @@ EOF
 # ---- main ---------------------------------------------------------------------------------
 
 if [ "$OS" = L ]; then
-    ALL=(packages suckless builds tools opt fonts links shell emacs session keyboard defaults theme)
+    ALL=(packages suckless builds tools opt fonts links shell emacs session keyboard defaults syncthing theme)
 else
-    ALL=(packages tools builds fonts links shell emacs defaults services theme)
+    ALL=(packages tools builds fonts links shell emacs defaults services syncthing theme)
 fi
 steps=()
 for a in "$@"; do
     case "$a" in
         --dry-run) DRY=1 ;;
-        -h|--help) sed -n '2,32p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,33p' "$0"; exit 0 ;;
         *) [[ " ${ALL[*]} " == *" $a "* ]] || { echo "unknown step: $a (steps here: ${ALL[*]})" >&2; exit 1; }
            steps+=("$a") ;;
     esac

@@ -13,3 +13,6 @@
 [submodule "rime"]
 	path = rime
 	url = git@github.com:AnissL93/rime.git
+[submodule "syncthing-hub"]
+	path = syncthing-hub
+	url = git@github.com:AnissL93/syncthing-hub.git

@@ -129,7 +129,7 @@ the file named in "Installed by".
 |---|---|---|---|---|---|
 | Firefox | LM | `opt.txt` / `Brewfile` | `dotfiles/firefox/` | ✓ | Linux: `/opt/firefox`; apt `firefox` (snap stub) also installed |
 | Chromium / Google Chrome | LM | **manual** (snap) / `Brewfile` (google-chrome) | | | |
-| Syncthing | LM | **manual** (vendor repo) / `Brewfile` | | | |
+| Syncthing | LM | **manual** (vendor repo) / `Brewfile` (syncthing-app), step `syncthing` | `syncthing-hub/` (`config.toml` not in git) | | hub and spoke through the Linux hub; step `syncthing` starts it at login and runs `inspect`; `apply` by hand |
 | Tailscale | LM | **manual** (vendor repo) / `Brewfile` | | | |
 | rclone, openlist | LM | **manual** / `Brewfile` (rclone) | | | `~/.local/bin`; openlist Linux only |
 | frpc | L | `opt.txt` | | | `/opt/frpc` |
