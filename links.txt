@@ -52,6 +52,7 @@ M   dotfiles/kitty/kitty.conf                 ~/.config/kitty/kitty.conf
 LM  dotfiles/doom                             ~/.config/doom
 LM  dotfiles/nvim-config                      ~/.config/nvim
 LM  dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
+LM  dotfiles/mpv/mpv.conf                     ~/.config/mpv/mpv.conf
 L   dotfiles/vscode/settings.json             ~/.config/Code/User/settings.json
 LM  dotfiles/themes/theme                     ~/.local/bin/theme
 LM  dotfiles/claude/skills/theme-from-picture ~/.claude/skills/theme-from-picture
