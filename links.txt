@@ -20,7 +20,7 @@ L   desktop/linux/gtk-3.0/settings.ini        ~/.config/gtk-3.0/settings.ini
 L   desktop/linux/redshift.conf               ~/.config/redshift.conf
 L   desktop/linux/bin/set-en-font             ~/.local/bin/set-en-font
 L   desktop/linux/bin/set-cjk-font            ~/.local/bin/set-cjk-font
-L   desktop/linux/bin/font-preset             ~/.local/bin/font-preset
+LM  desktop/linux/bin/font-preset             ~/.local/bin/font-preset
 L   desktop/linux/bin/vscode-ui-font          ~/.local/bin/vscode-ui-font
 L   desktop/linux/bin/ff-profile              ~/.local/bin/ff-profile
 L   desktop/linux/systemd/mix-mpd.service     ~/.config/systemd/user/mix-mpd.service
@@ -34,6 +34,8 @@ M   desktop/mac/bin/getpass                   ~/.local/bin/getpass
 M   desktop/mac/bin/dmenu_run                 ~/.local/bin/dmenu_run
 M   desktop/mac/bin/swallow                   ~/.local/bin/swallow
 M   desktop/mac/bin/term                      ~/.local/bin/term
+M   desktop/mac/bin/set-font                  ~/.local/bin/set-en-font
+M   desktop/mac/bin/set-font                  ~/.local/bin/set-cjk-font
 M   desktop/mac/gnupg/gpg-agent.conf          ~/.gnupg/gpg-agent.conf
 
 # keyboard: Karabiner rules generated from keymap/linux/keyd.conf (enable them in Karabiner)
@@ -53,6 +55,7 @@ LM  dotfiles/doom                             ~/.config/doom
 LM  dotfiles/nvim-config                      ~/.config/nvim
 LM  dotfiles/zathura/zathurarc                ~/.config/zathura/zathurarc
 LM  dotfiles/mpv/mpv.conf                     ~/.config/mpv/mpv.conf
+M   dotfiles/sioyek/sioyek-export             ~/.local/bin/sioyek-export
 L   dotfiles/vscode/settings.json             ~/.config/Code/User/settings.json
 LM  dotfiles/themes/theme                     ~/.local/bin/theme
 LM  dotfiles/claude/skills/theme-from-picture ~/.claude/skills/theme-from-picture

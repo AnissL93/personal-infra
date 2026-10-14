@@ -108,6 +108,7 @@ the file named in "Installed by".
 |---|---|---|---|---|---|
 | zathura + djvu/cb/ps plugins | LM | `apt.txt` / `Brewfile`, step `defaults` | `dotfiles/zathura/` | ✓ | default document viewer; macOS: `~/Applications/Zathura.app` (step `builds`) passes Finder's files to it. No AZW3 (MuPDF cannot read it) |
 | zathura-pdf-mupdf | LM | `builds/zathura-mupdf.sh` / `Brewfile` | | | EPUB/MOBI |
+| sioyek | M | **manual** | `dotfiles/sioyek/` | | for books you highlight: `h`+letter highlights, `sioyek-export` writes them to Obsidian `02_Sources/Books/Highlights` (KOReader callout style, needs `mutool`). Brew cask disabled (Gatekeeper): 3.0 alpha arm build from `github.com/ahrm/sioyek/releases`, then `xattr -dr com.apple.quarantine /Applications/sioyek.app` |
 | Zotero | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/zotero` |
 | hledger | LM | **manual** / `Brewfile` | `dotfiles/hledger/` | | |
 
