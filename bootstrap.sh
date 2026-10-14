@@ -185,6 +185,8 @@ step_fonts() {
     else                                    # macOS does not reliably follow a linked folder here
         x mkdir -p "$HOME/Library/Fonts/personal-infra"
         x rsync -a --delete --exclude '*.md' --exclude '*.txt' "$src/fonts/" "$HOME/Library/Fonts/personal-infra/"
+        # fontd misses new subfolders (Firefox etc. fall back to Helvetica); restarted, it reindexes in a minute or two
+        x pkill -x fontd || true
     fi
 }
 
