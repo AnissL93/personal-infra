@@ -26,6 +26,7 @@ zathura zathura-djvu zathura-cb zathura-ps
 
 # media
 mpv vlc ffmpeg blender
+nvidia-vaapi-driver   # Firefox hardware video decoding on the NVIDIA GPU
 
 # internet, sync, remote
 qbittorrent sshfs x11vnc

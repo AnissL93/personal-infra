@@ -116,19 +116,22 @@ the file named in "Installed by".
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| mpv, vlc | LM | `apt.txt` / `Brewfile` | | | |
+| mpv, vlc | LM | `apt.txt` / `Brewfile` | `dotfiles/mpv/` (mpv) | | mpv: `linux.conf` (nvdec, Bilibili cookies from Firefox) is included on Linux only |
+| uosc_danmaku | L | vendored | `dotfiles/mpv/scripts/uosc_danmaku/`, `dotfiles/mpv/script-opts/` | | mpv plugin v2.1.0 (`github.com/Tony15246/uosc_danmaku`): auto-loads Bilibili danmaku; `j` toggles (off on a fresh machine: press once), `Ctrl+d` search |
 | mix-mpd | L | `builds/mix-mpd.sh` | `desktop/linux/systemd/mix-mpd.service` | | `github.com:AnissL93/mix-mpd` (private; based on net-mpd, extended to mpv and other sources) in `~/System/mix-mpd` → `~/go/bin/mix-mpd` |
 | rmpc | L | `tools.txt` (cargo) | `~/.config/rmpc` (not in git) | ✓ | client for mix-mpd |
 | feh | L | `apt.txt` | | | image viewer and wallpaper setter |
 | ffmpeg, Blender | LM | `apt.txt` / `Brewfile` | | | |
 | LosslessCut | LM | `opt.txt` / `Brewfile` | | | Linux: `/opt/losslesscut` |
-| yt-dlp | LM | `tools.txt` (uv) | | | used by mix-mpd |
+| yt-dlp | LM | `tools.txt` (uv) | | | used by mix-mpd and mpv |
 
 ## Internet, sync, remote
 
 | App | Pf | Installed by | Config | Themed | Notes |
 |---|---|---|---|---|---|
-| Firefox | LM | `opt.txt` / `Brewfile` | `dotfiles/firefox/` | ✓ | Linux: `/opt/firefox`; apt `firefox` (snap stub) also installed |
+| Firefox | LM | `opt.txt` / `Brewfile` | `dotfiles/firefox/` | ✓ | Linux: `/opt/firefox`; apt `firefox` (snap stub) also installed. VA-API hardware decoding: `nvidia-vaapi-driver` (`apt.txt`), env in `xinitrc`, prefs in `user.js` |
+| ff2mpv | L | **manual** (Firefox add-on) | `dotfiles/ff2mpv/` | | native host: plays the page in mpv |
+| Violentmonkey | L | **manual** (Firefox add-on) | `dotfiles/firefox/bili-cdn.user.js` | | install the script by opening it as a `file://` URL; it moves Bilibili video to the `upos-sz-mirrorali` CDN. Bilibili-Evolved installed from its site |
 | Chromium / Google Chrome | LM | **manual** (snap) / `Brewfile` (google-chrome) | | | |
 | Syncthing | LM | **manual** (vendor repo) / `Brewfile` (syncthing-app), step `syncthing` | `syncthing-hub/` (`config.toml` not in git) | | hub and spoke through the Linux hub; step `syncthing` starts it at login and runs `inspect`; `apply` by hand |
 | Tailscale | LM | **manual** (vendor repo) / `Brewfile` | | | |
