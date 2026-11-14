@@ -181,10 +181,13 @@ step_fonts() {
     fi
     if [ "$OS" = L ]; then
         link "$src/fonts" "$HOME/.local/share/fonts/personal-infra"
+        [ -d "$HOME/Sync/Archive/fonts" ] && link "$HOME/Sync/Archive/fonts" "$HOME/.local/share/fonts/archive"
         x fc-cache -f
     else                                    # macOS does not reliably follow a linked folder here
         x mkdir -p "$HOME/Library/Fonts/personal-infra"
         x rsync -a --delete --exclude '*.md' --exclude '*.txt' "$src/fonts/" "$HOME/Library/Fonts/personal-infra/"
+        # licensed fonts (MonoLisa) can't go in the public assets repo; they live in the Syncthing Archive
+        [ -d "$HOME/Sync/Archive/fonts" ] && x rsync -a "$HOME/Sync/Archive/fonts/" "$HOME/Library/Fonts/personal-infra/"
         # fontd misses new subfolders (Firefox etc. fall back to Helvetica); restarted, it reindexes in a minute or two
         x pkill -x fontd || true
     fi
